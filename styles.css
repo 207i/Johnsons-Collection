@@ -1,14 +1,15 @@
 :root {
-  --bg: #090909;
-  --bg-soft: #121212;
-  --panel: rgba(255, 255, 255, 0.04);
-  --panel-strong: rgba(255, 255, 255, 0.07);
-  --text: #f3efe7;
-  --muted: #b8b0a3;
-  --line: rgba(255, 255, 255, 0.08);
-  --gold: #c9a66b;
-  --gold-2: #e8c58b;
-  --shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  --bg: #1a1a1a;
+  --bg-soft: #242424;
+  --panel: rgba(255, 255, 255, 0.055);
+  --panel-strong: rgba(255, 255, 255, 0.09);
+  --text: #f4f1ec;
+  --muted: #bdb7ae;
+  --line: rgba(255, 255, 255, 0.11);
+  --gold: #c8a96a;
+  --gold-2: #f0d08a;
+  --silver: #a7abb2;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
   --radius: 22px;
   --radius-sm: 16px;
   --max: 1200px;
@@ -26,9 +27,10 @@ html {
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(201, 166, 107, 0.12), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(201, 166, 107, 0.08), transparent 20%),
-    var(--bg);
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.09), transparent 28%),
+    radial-gradient(circle at 80% 10%, rgba(200, 169, 106, 0.10), transparent 25%),
+    radial-gradient(circle at bottom right, rgba(120, 120, 120, 0.18), transparent 32%),
+    linear-gradient(135deg, #161616 0%, #222222 45%, #101010 100%);
   color: var(--text);
   font-family: "Inter", sans-serif;
   line-height: 1.6;
