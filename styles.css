@@ -352,10 +352,7 @@ textarea {
 }
 
 .marquee {
-  border-block: 1px solid var(--line);
-  overflow: hidden;
-  white-space: nowrap;
-  background: #0d0d0d;
+  background: #202020;
 }
 
 .marquee-track {
