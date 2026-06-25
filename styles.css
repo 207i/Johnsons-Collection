@@ -73,12 +73,7 @@ textarea {
 }
 
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  backdrop-filter: blur(20px);
-  background: rgba(9, 9, 9, 0.75);
-  border-bottom: 1px solid var(--line);
+  background: rgba(28, 28, 28, 0.78);
 }
 
 .nav {
