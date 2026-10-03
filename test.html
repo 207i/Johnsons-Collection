@@ -1,0 +1,7009 @@
+import {
+  getRPASModel,
+  getRPASModelForExperiment,
+  listRPASModels,
+} from "../../core/models/RPASModelRegistry";
+
+import {
+  resolveRPASModelMeasurementActivation,
+} from "../../core/models/RPASModelMeasurementActivation";
+
+import {
+  RPASStudioVerifiedRunEvidenceProductSurfaceSnapshot,
+} from "./RPASStudioVerifiedRunEvidenceProductSurfaceSnapshot";
+import { RPASStudioVerifiedRunEvidenceProductRenderContract } from "./RPASStudioVerifiedRunEvidenceProductRenderContract";
+import { RPASStudioVerifiedRunEvidenceProductViewModel } from "./RPASStudioVerifiedRunEvidenceProductViewModel";
+import { RPASStudioVerifiedRunEvidenceProductAction } from "./RPASStudioVerifiedRunEvidenceProductAction";
+import { RPASStudioVerifiedRunEvidenceProductUseCase } from "./RPASStudioVerifiedRunEvidenceProductUseCase";
+import {
+  resolveExperimentProfile,
+} from "../../core/experiments/ExperimentProfileResolver";
+
+
+import * as fs from "fs";
+
+import {
+  execFileSync,
+  spawn,
+} from "child_process";
+
+import * as http from "http";
+import * as path from "path";
+
+import {
+  createExperimentRequest,
+} from "../../core/contracts/ExperimentRequest";
+
+import {
+  MissingActiveCalibrationPolicy,
+  resolveRuntimeCalibration,
+} from "../../core/calibration/realtime/CalibrationRuntimeResolver";
+
+import {
+  createExecutionCalibrationIdentity,
+} from "../../core/calibration/realtime/ExecutionCalibrationIdentity";
+import {
+  RPASExecutionConvergenceBuilder,
+} from "../../core/engine/RPASExecutionConvergenceBuilder";
+import {
+  RPASExecutionEngineeringStateBuilder,
+} from "../../core/engine/RPASExecutionEngineeringStateBuilder";
+import {
+  RPASExecutionCockpitStateBuilder,
+} from "../../core/cockpit/RPASExecutionCockpitStateBuilder";
+
+import {
+  RPASExecutionCockpitStateExporter,
+} from "../../core/cockpit/RPASExecutionCockpitStateExporter";
+
+import {
+  RPASExecutionCockpitLaboratoryRunEvidenceProjector,
+} from "../../core/cockpit/RPASExecutionCockpitLaboratoryRunEvidenceProjector";
+
+import {
+  RPASExecutionCockpitLaboratoryRunEvidenceStateExporter,
+} from "../../core/cockpit/RPASExecutionCockpitLaboratoryRunEvidenceStateExporter";
+import {
+  RPASStudioVerifiedPersistedCockpitLaboratoryRunEvidenceConsumptionBridge,
+} from "./RPASStudioVerifiedPersistedCockpitLaboratoryRunEvidenceConsumptionBridge";
+import {
+  RPASStudioPersistedCockpitLaboratoryRunEvidenceResolver,
+} from "./RPASStudioPersistedCockpitLaboratoryRunEvidenceResolver";
+import {
+  RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateExporter,
+} from "../../core/cockpit/RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateExporter";
+import {
+  RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateExporter,
+} from "../../core/cockpit/RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateExporter";
+import {
+  RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateExporter,
+} from "../../core/cockpit/RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateExporter";
+
+import {
+  RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionBridge,
+} from "./RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionBridge";
+import {
+  RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateResolver,
+} from "./RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateResolver";
+import {
+  RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateResolver,
+} from "./RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateResolver";
+import {
+  RPASStudioVerifiedRunEvidenceBoundary,
+} from "./RPASStudioVerifiedRunEvidenceBoundary";
+
+import {
+  RPASStudioVerifiedRunEvidenceBoundaryGuard,
+} from "./RPASStudioVerifiedRunEvidenceBoundaryGuard";
+
+import {
+  RPASStudioVerifiedRunEvidenceApiContract,
+} from "./RPASStudioVerifiedRunEvidenceApiContract";
+
+import {
+  RPASStudioVerifiedRunEvidenceCompatibilityBoundary,
+} from "./RPASStudioVerifiedRunEvidenceCompatibilityBoundary";
+
+import {
+  RPASStudioVerifiedRunEvidenceClientContract,
+} from "./RPASStudioVerifiedRunEvidenceClientContract";
+
+import {
+  RPASStudioVerifiedRunEvidenceClientResponseResolver,
+} from "./RPASStudioVerifiedRunEvidenceClientResponseResolver";
+import {
+  RPASStudioVerifiedRunEvidenceClientCapabilityNegotiator,
+} from "./RPASStudioVerifiedRunEvidenceClientCapabilityNegotiator";
+import {
+  RPASStudioVerifiedRunEvidenceTransportContract,
+} from "./RPASStudioVerifiedRunEvidenceTransportContract";
+import {
+  RPASStudioVerifiedRunEvidenceEndpointContract,
+} from "./RPASStudioVerifiedRunEvidenceEndpointContract";
+import {
+  RPASStudioVerifiedRunEvidenceProductRuntime,
+} from "./RPASStudioVerifiedRunEvidenceProductRuntime";
+import {
+  RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionBridge,
+} from "./RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionBridge";
+import {
+  RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionStateExporter,
+} from "../../core/cockpit/RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionStateExporter";
+import {
+  RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionStateVerifier,
+} from "../../core/cockpit/RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionStateVerifier";
+import {
+  RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionBridge,
+} from "./RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionBridge";
+import {
+  RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateResolver,
+} from "./RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateResolver";
+import {
+  RPASStudioLaboratoryEvidenceResolver,
+} from "./RPASStudioLaboratoryEvidenceResolver";
+
+import {
+  RPASStudioLaboratoryRunEvidenceResolver,
+} from "./RPASStudioLaboratoryRunEvidenceResolver";
+
+import {
+  RPASEngine,
+} from "../../core/engine/RPASEngine";
+
+import {
+  EvidenceSealer,
+} from "../../core/framework/EvidenceSealer";
+
+import {
+  writeBlenderHandoffPackage,
+} from "../../integration/blender/BlenderExperimentHandoff";
+
+import {
+  resolveExperimentVisualization,
+} from "../../integration/blender/ExperimentVisualizationResolver";
+
+import {
+  BioGlowSimulationInputs,
+} from "../../core/experiments/bioglow/BioGlowResponseState";
+
+import {
+  resolveBioGlowSimulationInputs,
+} from "../../core/experiments/bioglow/BioGlowSimulationInputResolver";
+
+import {
+  simulateBioGlowResponse,
+} from "../../core/experiments/bioglow/BioGlowSimulationModel";
+import {
+  buildBioGlowVisualizationState,
+} from "../../integration/blender/BioGlowVisualizationStateBuilder";
+
+
+interface JsonObject {
+  readonly [key: string]:
+    unknown;
+}
+
+
+class RPASRequestValidationError extends Error {
+  public constructor(
+    message:
+      string,
+  ) {
+    super(
+      message,
+    );
+
+    this.name =
+      "RPASRequestValidationError";
+  }
+}
+
+export interface RPASStudioServerOptions {
+  readonly projectRoot?:
+    string;
+
+  readonly ownerId?:
+    string;
+
+  readonly telemetryDirectory?:
+    string;
+
+  readonly evidenceDirectory?:
+    string;
+
+  readonly publicExperimentsDirectory?:
+    string;
+
+  readonly releaseReportPath?:
+    string;
+
+  readonly fullSweepReportPath?:
+    string;
+
+  readonly studioDirectory?:
+    string;
+
+  /*
+   * Runtime calibration persistence root.
+   *
+   * Default:
+   *   <projectRoot>\data\calibration
+   */
+  readonly calibrationRootDirectory?:
+    string;
+
+  /*
+   * The core resolver itself defaults to ERROR.
+   *
+   * Studio V1 explicitly defaults to DEFAULT_PROFILE so
+   * existing experiment execution remains compatible while
+   * calibrationResolution exposes when fallback occurred.
+   */
+  readonly missingActiveCalibrationPolicy?:
+    MissingActiveCalibrationPolicy;
+}
+
+
+export interface RPASStudioHistoryEntry {
+  readonly experimentId:
+    string;
+
+  readonly executionId:
+    string;
+
+  readonly timestamp:
+    string;
+
+  readonly material:
+    string;
+
+  readonly finalFrequency?:
+    number;
+
+  readonly status:
+    string;
+
+  readonly evidenceId?:
+    string;
+
+  readonly telemetryPath:
+    string;
+}
+
+
+export interface RPASStudioEvidenceStatus {
+  readonly envelopeId?:
+    string;
+
+  readonly sealedAt?:
+    string;
+
+  readonly algorithm?:
+    string;
+
+  readonly signature?:
+    string;
+
+  readonly verified:
+    boolean;
+
+  readonly evidencePath:
+    string;
+
+  readonly executionId?:
+    string;
+}
+
+
+export interface RPASStudioEvidenceEntry {
+  readonly envelopeId:
+    string;
+
+  readonly sealedAt?:
+    string;
+
+  readonly algorithm?:
+    string;
+
+  readonly signature?:
+    string;
+
+  readonly verified:
+    boolean;
+
+  readonly evidencePath:
+    string;
+
+  readonly experimentId?:
+    string;
+
+  readonly executionId?:
+    string;
+
+  readonly material?:
+    string;
+
+  readonly telemetryPath?:
+    string;
+}
+
+
+export interface RPASStudioDashboardSnapshot {
+  readonly generatedAt:
+    string;
+
+  readonly system: {
+    readonly status:
+      | "OPERATIONAL"
+      | "DEGRADED";
+
+    readonly engineOnline:
+      boolean;
+
+    readonly telemetryOnline:
+      boolean;
+
+    readonly vaultOnline:
+      boolean;
+
+    readonly healthPercent:
+      number;
+  };
+
+  readonly totals: {
+    readonly experiments:
+      number;
+
+    readonly sealedEvidence:
+      number;
+  };
+
+  readonly latestExperiment:
+    RPASStudioHistoryEntry | null;
+
+  readonly latestTelemetry:
+    JsonObject | null;
+
+  readonly latestEvidence:
+    RPASStudioEvidenceStatus | null;
+
+  readonly release: {
+    readonly status:
+      | "READY"
+      | "BLOCKED"
+      | "UNKNOWN";
+
+    readonly compileStatus:
+      | "PASS"
+      | "FAIL"
+      | "UNKNOWN";
+
+    readonly selected:
+      number;
+
+    readonly passed:
+      number;
+
+    readonly failed:
+      number;
+  };
+
+  readonly fullSweep: {
+    readonly status:
+      | "READY"
+      | "BLOCKED"
+      | "UNKNOWN";
+
+    readonly discovered:
+      number;
+
+    readonly executed:
+      number;
+
+    readonly passed:
+      number;
+
+    readonly failed:
+      number;
+
+    readonly timedOut:
+      number;
+  };
+
+  readonly history:
+    readonly RPASStudioHistoryEntry[];
+}
+
+export class RPASStudioDataService {
+  readonly projectRoot:
+    string;
+
+  readonly telemetryDirectory:
+    string;
+
+  readonly evidenceDirectory:
+    string;
+
+  readonly publicExperimentsDirectory:
+    string;
+
+  readonly releaseReportPath:
+    string;
+
+  readonly fullSweepReportPath:
+    string;
+
+  readonly studioDirectory:
+    string;
+
+  constructor(
+    options:
+      RPASStudioServerOptions = {},
+  ) {
+    this.projectRoot =
+      path.resolve(
+        options.projectRoot ??
+        process.cwd(),
+      );
+
+    const ownerId =
+      options.ownerId ??
+      "local-owner";
+
+    if (
+      !/^[a-zA-Z0-9_-]+$/.test(
+        ownerId,
+      )
+    ) {
+      throw new Error(
+        "Studio ownerId contains unsafe characters.",
+      );
+    }
+
+    const ownerDataDirectory =
+      path.join(
+        this.projectRoot,
+        "data",
+        "users",
+        ownerId,
+      );
+
+    this.telemetryDirectory =
+      path.resolve(
+        options.telemetryDirectory ??
+        path.join(
+          ownerDataDirectory,
+          "telemetry",
+        ),
+      );
+
+    this.evidenceDirectory =
+      path.resolve(
+        options.evidenceDirectory ??
+        path.join(
+          ownerDataDirectory,
+          "evidence",
+        ),
+      );
+
+    this.publicExperimentsDirectory =
+      path.resolve(
+        options.publicExperimentsDirectory ??
+        path.join(
+          this.projectRoot,
+          "data",
+          "public",
+          "experiments",
+        ),
+      );
+
+    this.releaseReportPath =
+      path.resolve(
+        options.releaseReportPath ??
+        path.join(
+          this.projectRoot,
+          "docs",
+          "evidence",
+          "RPAS_V1_RELEASE_READINESS.json",
+        ),
+      );
+
+    this.fullSweepReportPath =
+      path.resolve(
+        options.fullSweepReportPath ??
+        path.join(
+          this.projectRoot,
+          "docs",
+          "evidence",
+          "RPAS_V1_FULL_SWEEP.json",
+        ),
+      );
+
+    this.studioDirectory =
+      path.resolve(
+        options.studioDirectory ??
+        path.join(
+          this.projectRoot,
+          "studio",
+        ),
+      );
+  }
+
+
+
+  dashboard():
+    RPASStudioDashboardSnapshot {
+    const history =
+      this.history(
+        100,
+      );
+
+    const latestExperiment =
+      history.length >
+        0
+        ? history[0]
+        : null;
+
+    const latestTelemetry =
+      latestExperiment
+        ? this.readJson(
+            latestExperiment
+              .telemetryPath,
+          )
+        : null;
+
+    const evidenceFiles =
+      this.listJsonFiles(
+        this.evidenceDirectory,
+        "RPAS_EVIDENCE_",
+      );
+
+    const latestEvidence =
+      evidenceFiles.length >
+        0
+        ? this.evidenceStatus(
+            evidenceFiles[0],
+          )
+        : null;
+
+    const releaseReport =
+      this.readJson(
+        this.releaseReportPath,
+      );
+
+    const fullSweepReport =
+      this.readJson(
+        this.fullSweepReportPath,
+      );
+
+
+    const finalV1ReleaseAuthority =
+      this.finalV1ReleaseAuthority();
+
+
+    const releaseReady =
+      releaseReport
+        ?.releaseStatus ===
+        "READY" ||
+      finalV1ReleaseAuthority
+        .releaseReady;
+
+
+    const fullSweepReady =
+      fullSweepReport
+        ?.releaseStatus ===
+        "READY" ||
+      finalV1ReleaseAuthority
+        .fullSweepReady;
+
+    const engineOnline =
+      true;
+
+    const telemetryOnline =
+      fs.existsSync(
+        this.telemetryDirectory,
+      );
+
+    const vaultOnline =
+      fs.existsSync(
+        this.evidenceDirectory,
+      );
+
+    const healthChecks = [
+      engineOnline,
+      telemetryOnline,
+      vaultOnline,
+      releaseReady,
+      fullSweepReady,
+    ];
+
+    const healthPercent =
+      Math.round(
+        (
+          healthChecks.filter(
+            Boolean,
+          ).length /
+          healthChecks.length
+        ) *
+        100,
+      );
+
+    const releaseCompile =
+      releaseReport
+        ?.compile;
+
+    const releaseCompileStatus =
+      typeof releaseCompile ===
+        "object" &&
+      releaseCompile !==
+        null &&
+      !Array.isArray(
+        releaseCompile,
+      )
+        ? (
+            releaseCompile as
+              JsonObject
+          ).status
+        : undefined;
+
+    return Object.freeze({
+      generatedAt:
+        new Date()
+          .toISOString(),
+
+      system:
+        Object.freeze({
+          status:
+            healthPercent ===
+              100
+              ? "OPERATIONAL"
+              : "DEGRADED",
+
+          engineOnline,
+          telemetryOnline,
+          vaultOnline,
+          healthPercent,
+        }),
+
+      totals:
+        Object.freeze({
+          experiments:
+            history.length,
+
+          sealedEvidence:
+            evidenceFiles.length,
+        }),
+
+      latestExperiment,
+      latestTelemetry,
+      latestEvidence,
+
+      release:
+        Object.freeze({
+          status:
+            releaseReady
+              ? "READY"
+              : this.releaseStatus(
+                  releaseReport
+                    ?.releaseStatus,
+                ),
+
+          compileStatus:
+            finalV1ReleaseAuthority
+              .compilePass
+              ? "PASS"
+              : this.passFailStatus(
+                  releaseCompileStatus,
+                ),
+
+          selected:
+            this.numberValue(
+              releaseReport
+                ?.testsSelected,
+            ),
+
+          passed:
+            this.numberValue(
+              releaseReport
+                ?.testsPassed,
+            ),
+
+          failed:
+            this.numberValue(
+              releaseReport
+                ?.testsFailed,
+            ),
+        }),
+
+      fullSweep:
+        Object.freeze({
+          status:
+            fullSweepReady
+              ? "READY"
+              : this.releaseStatus(
+                  fullSweepReport
+                    ?.releaseStatus,
+                ),
+
+          discovered:
+            this.numberValue(
+              fullSweepReport
+                ?.testsDiscovered,
+            ),
+
+          executed:
+            this.numberValue(
+              fullSweepReport
+                ?.testsExecuted,
+            ),
+
+          passed:
+            this.numberValue(
+              fullSweepReport
+                ?.testsPassed,
+            ),
+
+          failed:
+            this.numberValue(
+              fullSweepReport
+                ?.testsFailed,
+            ),
+
+          timedOut:
+            this.numberValue(
+              fullSweepReport
+                ?.testsTimedOut,
+            ),
+        }),
+
+      history:
+        Object.freeze([
+          ...history,
+        ]),
+    });
+  }
+
+
+  history(
+    limit =
+      100,
+  ): RPASStudioHistoryEntry[] {
+    const telemetryFiles =
+      this.listJsonFiles(
+        this.telemetryDirectory,
+        "RPAS_TELEMETRY_",
+      );
+
+    const entries:
+      RPASStudioHistoryEntry[] =
+        [];
+
+    for (
+      const telemetryPath
+      of telemetryFiles
+    ) {
+      const telemetry =
+        this.readJson(
+          telemetryPath,
+        );
+
+      if (
+        telemetry ===
+        null
+      ) {
+        continue;
+      }
+
+      const calibratedResult =
+        telemetry
+          .calibratedResult;
+
+      let finalFrequency:
+        number | undefined;
+
+      if (
+        typeof calibratedResult ===
+          "object" &&
+        calibratedResult !==
+          null &&
+        !Array.isArray(
+          calibratedResult,
+        )
+      ) {
+        const candidate =
+          (
+            calibratedResult as
+              JsonObject
+          ).finalFrequency;
+
+        if (
+          typeof candidate ===
+            "number" &&
+          Number.isFinite(
+            candidate,
+          )
+        ) {
+          finalFrequency =
+            candidate;
+        }
+      }
+
+      const fallbackTimestamp =
+        new Date(
+          fs.statSync(
+            telemetryPath,
+          ).mtimeMs,
+        ).toISOString();
+
+      entries.push(
+        Object.freeze({
+          experimentId:
+            this.textValue(
+              telemetry
+                .experimentId,
+              "UNKNOWN",
+            ),
+
+          executionId:
+            this.textValue(
+              telemetry
+                .executionId,
+
+              path.basename(
+                telemetryPath,
+                ".json",
+              ),
+            ),
+
+          timestamp:
+            this.textValue(
+              telemetry
+                .timestamp,
+              fallbackTimestamp,
+            ),
+
+          material:
+            this.textValue(
+              telemetry
+                .material,
+              "UNKNOWN",
+            ),
+
+          finalFrequency,
+
+          status:
+            this.textValue(
+              telemetry
+                .status,
+              "unknown",
+            ),
+
+          evidenceId:
+            typeof telemetry
+              .evidenceId ===
+              "string"
+              ? telemetry
+                  .evidenceId
+              : undefined,
+
+          telemetryPath,
+        }),
+      );
+    }
+
+        return entries
+      .sort(
+        (
+          left,
+          right,
+        ) =>
+          Date.parse(
+            right.timestamp,
+          ) -
+          Date.parse(
+            left.timestamp,
+          ),
+      )
+      .slice(
+        0,
+        limit,
+      );
+  }
+
+
+  publicExperiments():
+    readonly JsonObject[] {
+    const files =
+      this.listJsonFiles(
+        this.publicExperimentsDirectory,
+        "",
+      );
+
+    const experiments:
+      JsonObject[] =
+        [];
+
+    for (
+      const filePath
+      of files
+    ) {
+      const experiment =
+        this.readJson(
+          filePath,
+        );
+
+      if (
+        experiment ===
+          null
+      ) {
+        continue;
+      }
+
+      experiments.push(
+        Object.freeze({
+          ...experiment,
+        }),
+      );
+    }
+
+    return Object.freeze([
+      ...experiments,
+    ]);
+  }
+
+  evidenceHistory(
+    limit =
+      100,
+  ): RPASStudioEvidenceEntry[] {
+
+    const evidenceFiles =
+      this.listJsonFiles(
+        this.evidenceDirectory,
+        "RPAS_EVIDENCE_",
+      );
+
+    const experimentHistory =
+      this.history(
+        1000,
+      );
+
+    const entries:
+      RPASStudioEvidenceEntry[] =
+        [];
+
+    for (
+      const evidencePath
+      of evidenceFiles
+    ) {
+      const status =
+        this.evidenceStatus(
+          evidencePath,
+        );
+
+      const envelope =
+        this.readJson(
+          evidencePath,
+        );
+
+      if (
+        envelope ===
+        null
+      ) {
+        continue;
+      }
+
+      const record =
+        envelope.record;
+
+      let executionId:
+        string | undefined;
+
+      if (
+        typeof record ===
+          "object" &&
+        record !==
+          null &&
+        !Array.isArray(
+          record,
+        )
+      ) {
+        const candidate =
+          (
+            record as
+              JsonObject
+          ).executionId;
+
+        if (
+          typeof candidate ===
+            "string"
+        ) {
+          executionId =
+            candidate;
+        }
+      }
+
+      const matchingExperiment =
+        experimentHistory.find(
+          (entry) =>
+            entry.evidenceId ===
+              status.envelopeId ||
+            (
+              executionId !==
+                undefined &&
+              entry.executionId ===
+                executionId
+            ),
+        );
+
+      entries.push(
+        Object.freeze({
+          envelopeId:
+            status.envelopeId ??
+            path.basename(
+              evidencePath,
+              ".json",
+            ).replace(
+              /^RPAS_EVIDENCE_/,
+              "",
+            ),
+
+          sealedAt:
+            status.sealedAt,
+
+          algorithm:
+            status.algorithm,
+
+          signature:
+            status.signature,
+
+          verified:
+            status.verified,
+
+          evidencePath,
+
+          experimentId:
+            matchingExperiment
+              ?.experimentId,
+
+          executionId:
+            matchingExperiment
+              ?.executionId ??
+            executionId,
+
+          material:
+            matchingExperiment
+              ?.material,
+
+          telemetryPath:
+            matchingExperiment
+              ?.telemetryPath,
+        }),
+      );
+    }
+
+    return entries
+      .sort(
+        (
+          left,
+          right,
+        ) =>
+          Date.parse(
+            right.sealedAt ??
+            "1970-01-01T00:00:00.000Z",
+          ) -
+          Date.parse(
+            left.sealedAt ??
+            "1970-01-01T00:00:00.000Z",
+          ),
+      )
+      .slice(
+        0,
+        limit,
+      );
+  }
+
+
+  telemetryPathByExecutionId(
+    executionId:
+      string,
+  ): string | null {
+    const historyEntry =
+      this.history(
+        1000,
+      ).find(
+        (entry) =>
+          entry.executionId ===
+          executionId,
+      );
+
+    return historyEntry ===
+      undefined
+      ? null
+      : historyEntry
+          .telemetryPath;
+  }
+
+
+  telemetryByExecutionId(
+    executionId:
+      string,
+  ): JsonObject | null {
+    const telemetryPath =
+      this.telemetryPathByExecutionId(
+        executionId,
+      );
+
+    return telemetryPath ===
+      null
+      ? null
+      : this.readJson(
+          telemetryPath,
+        );
+  }
+
+
+  latestTelemetry():
+    JsonObject | null {
+    const files =
+      this.listJsonFiles(
+        this.telemetryDirectory,
+        "RPAS_TELEMETRY_",
+      );
+
+    return files.length >
+      0
+      ? this.readJson(
+          files[0],
+        )
+      : null;
+  }
+
+
+  latestEvidence():
+    RPASStudioEvidenceStatus | null {
+    const files =
+      this.listJsonFiles(
+        this.evidenceDirectory,
+        "RPAS_EVIDENCE_",
+      );
+
+    return files.length >
+      0
+      ? this.evidenceStatus(
+          files[0],
+        )
+      : null;
+  }
+
+
+  evidenceStatus(
+    evidencePath:
+      string,
+  ): RPASStudioEvidenceStatus {
+    const envelope =
+      this.readJson(
+        evidencePath,
+      );
+
+    if (
+      envelope ===
+      null
+    ) {
+      return Object.freeze({
+        verified:
+          false,
+
+        evidencePath,
+      });
+    }
+
+    const algorithm =
+      typeof envelope
+        .algorithm ===
+        "string"
+        ? envelope
+            .algorithm
+        : undefined;
+
+    const signature =
+      typeof envelope
+        .signature ===
+        "string"
+        ? envelope
+            .signature
+        : undefined;
+
+    const record =
+      envelope.record;
+
+    const executionId =
+      typeof record ===
+        "object" &&
+      record !==
+        null &&
+      !Array.isArray(
+        record,
+      ) &&
+      typeof (
+        record as
+          JsonObject
+      ).executionId ===
+        "string"
+        ? (
+            record as
+              JsonObject
+          ).executionId as
+            string
+        : undefined;
+
+    const verified =
+      algorithm ===
+        "SHA-256" &&
+      signature !==
+        undefined &&
+      record !==
+        undefined &&
+      record !==
+        null &&
+      EvidenceSealer.signature(
+        record,
+      ) ===
+        signature;
+
+    return Object.freeze({
+      envelopeId:
+        typeof envelope
+          .envelopeId ===
+          "string"
+          ? envelope
+              .envelopeId
+          : undefined,
+
+      sealedAt:
+        typeof envelope
+          .sealedAt ===
+          "string"
+          ? envelope
+              .sealedAt
+          : undefined,
+
+      algorithm,
+      signature,
+      verified,
+      evidencePath,
+      executionId,
+    });
+  }
+
+
+  readJson(
+    filePath:
+      string,
+  ): JsonObject | null {
+    if (
+      !fs.existsSync(
+        filePath,
+      )
+    ) {
+      return null;
+    }
+
+    try {
+      const parsed =
+        JSON.parse(
+          fs.readFileSync(
+            filePath,
+            "utf8",
+          ),
+        ) as unknown;
+
+      if (
+        typeof parsed !==
+          "object" ||
+        parsed ===
+          null ||
+        Array.isArray(
+          parsed,
+        )
+      ) {
+        return null;
+      }
+
+      return parsed as
+        JsonObject;
+    } catch {
+      return null;
+    }
+  }
+
+
+  private listJsonFiles(
+    directory:
+      string,
+
+    prefix:
+      string,
+  ): string[] {
+    if (
+      !fs.existsSync(
+        directory,
+      )
+    ) {
+      return [];
+    }
+
+    return fs
+      .readdirSync(
+        directory,
+      )
+      .filter(
+        (file) =>
+          file.startsWith(
+            prefix,
+          ) &&
+          file.endsWith(
+            ".json",
+          ),
+      )
+      .map(
+        (file) =>
+          path.join(
+            directory,
+            file,
+          ),
+      )
+      .sort(
+        (
+          left,
+          right,
+        ) =>
+          fs.statSync(
+            right,
+          ).mtimeMs -
+          fs.statSync(
+            left,
+          ).mtimeMs,
+      );
+  }
+
+
+  private textValue(
+    value:
+      unknown,
+
+    fallback:
+      string,
+  ): string {
+    return typeof value ===
+      "string"
+      ? value
+      : fallback;
+  }
+
+
+  private numberValue(
+    value:
+      unknown,
+  ): number {
+    return typeof value ===
+      "number" &&
+      Number.isFinite(
+        value,
+      )
+      ? value
+      : 0;
+  }
+
+
+  private finalV1ReleaseAuthority(): {
+    readonly releaseReady:
+      boolean;
+
+    readonly compilePass:
+      boolean;
+
+    readonly fullSweepReady:
+      boolean;
+  } {
+    const seal =
+      this.readJson(
+        path.join(
+          this.projectRoot,
+          "_development",
+          "checkpoints",
+          "RPAS_V1_FINAL_PRODUCT_ACCEPTANCE_RELEASE_SEAL.json",
+        ),
+      );
+
+
+    if (
+      seal ===
+        null
+    ) {
+      return Object.freeze({
+        releaseReady:
+          false,
+
+        compilePass:
+          false,
+
+        fullSweepReady:
+          false,
+      });
+    }
+
+
+    const identityValue =
+      seal.identity;
+
+    const assertionsValue =
+      seal.assertions;
+
+    const terminalValue =
+      seal.terminalVerification;
+
+
+    const identity =
+      typeof identityValue ===
+        "object" &&
+      identityValue !==
+        null &&
+      !Array.isArray(
+        identityValue,
+      )
+        ? identityValue as
+            JsonObject
+        : null;
+
+
+    const assertions =
+      typeof assertionsValue ===
+        "object" &&
+      assertionsValue !==
+        null &&
+      !Array.isArray(
+        assertionsValue,
+      )
+        ? assertionsValue as
+            JsonObject
+        : null;
+
+
+    const terminal =
+      typeof terminalValue ===
+        "object" &&
+      terminalValue !==
+        null &&
+      !Array.isArray(
+        terminalValue,
+      )
+        ? terminalValue as
+            JsonObject
+        : null;
+
+
+    const releaseReady =
+      identity
+        ?.status ===
+        "PASS" &&
+      identity
+        ?.authority ===
+        "FINAL_PRODUCT_ACCEPTANCE_RELEASE_SEAL" &&
+      assertions
+        ?.v1ArchitectureComplete ===
+        true &&
+      assertions
+        ?.v1ProductAcceptance ===
+        "PASS" &&
+      assertions
+        ?.v1Release ===
+        "FINAL_RELEASE_SEALED";
+
+
+    return Object.freeze({
+      releaseReady,
+
+      compilePass:
+        releaseReady &&
+        terminal
+          ?.typescriptCompile ===
+          "PASS",
+
+      fullSweepReady:
+        releaseReady &&
+        terminal
+          ?.v1FullSweep ===
+          "PASS",
+    });
+  }
+
+
+  private releaseStatus(
+    value:
+      unknown,
+  ):
+    | "READY"
+    | "BLOCKED"
+    | "UNKNOWN" {
+    if (
+      value ===
+        "READY" ||
+      value ===
+        "BLOCKED"
+    ) {
+      return value;
+    }
+
+    return "UNKNOWN";
+  }
+
+
+  private passFailStatus(
+    value:
+      unknown,
+  ):
+    | "PASS"
+    | "FAIL"
+    | "UNKNOWN" {
+    if (
+      value ===
+        "PASS" ||
+      value ===
+        "FAIL"
+    ) {
+      return value;
+    }
+
+    return "UNKNOWN";
+  }
+}
+
+
+export class RPASStudioServer {
+  /*
+   * ========================================================
+   * RPAS M102.5 - Amplifier User Mode execution projection
+   * ========================================================
+   *
+   * Product-safe in-memory state only.
+   *
+   * Forbidden from this projection:
+   * - source paths
+   * - filesystem paths
+   * - Blender source paths
+   * - adapter paths
+   * - formulas
+   * - private simulation inputs
+   * - IDE/development information
+   * ========================================================
+   */
+  private latestAmplifierExecutionState:
+    JsonObject | null =
+      null;
+
+  private latestVerifiedRunEvidenceProductRenderContract:
+    ReturnType<
+      typeof RPASStudioVerifiedRunEvidenceProductRenderContract.create
+    > | null =
+      null;
+
+  private readonly data:
+    RPASStudioDataService;
+
+  private readonly engine:
+    RPASEngine;
+
+  private readonly calibrationRootDirectory:
+    string;
+
+  private readonly missingActiveCalibrationPolicy:
+    MissingActiveCalibrationPolicy;
+
+
+  constructor(
+  options:
+    RPASStudioServerOptions = {},
+
+  engine?:
+    RPASEngine,
+) {
+  this.data =
+    new RPASStudioDataService(
+      options,
+    );
+
+  this.engine =
+    engine ??
+    new RPASEngine({
+      telemetryDirectory:
+        this.data.telemetryDirectory,
+
+      evidenceDirectory:
+        this.data.evidenceDirectory,
+    });
+
+    this.calibrationRootDirectory =
+      path.resolve(
+        options.calibrationRootDirectory ??
+        path.join(
+          this.data.projectRoot,
+          "data",
+          "calibration",
+        ),
+      );
+
+    /*
+     * Compatibility is explicit here.
+     *
+     * The lower-level runtime resolver remains fail-closed
+     * unless a caller deliberately selects fallback.
+     */
+    this.missingActiveCalibrationPolicy =
+      options.missingActiveCalibrationPolicy ??
+      "DEFAULT_PROFILE";
+  }
+
+
+  start(
+    port =
+      4173,
+
+    host =
+      "127.0.0.1",
+  ): Promise<
+    http.Server
+  > {
+    return new Promise(
+      (
+        resolve,
+        reject,
+      ) => {
+        const server =
+          http.createServer(
+            (
+              request,
+              response,
+            ) => {
+              this.handle(
+                request,
+                response,
+              ).catch(
+                (
+                  error:
+                    unknown,
+                ) => {
+                  const message =
+                    error instanceof
+                      Error
+                      ? error.message
+                      : String(
+                          error,
+                        );
+
+                  const statusCode =
+                    error instanceof
+                      RPASRequestValidationError
+                      ? 400
+                      : message ===
+                          "Invalid Host header."
+                        ? 400
+                        : message ===
+                            "Cross-origin request rejected."
+                          ? 403
+                          : 500;
+
+                  this.json(
+                    response,
+                    statusCode,
+                    {
+                      error:
+                        message,
+                    },
+                  );
+                },
+              );
+            },
+          );
+
+        server.once(
+          "error",
+          reject,
+        );
+
+        server.listen(
+          port,
+          host,
+          () => {
+            resolve(
+              server,
+            );
+          },
+        );
+      },
+    );
+  }
+
+
+  private async handle(
+    request:
+      http.IncomingMessage,
+
+    response:
+      http.ServerResponse,
+  ): Promise<void> {
+    this.validateRequestAuthority(
+      request,
+    );
+
+    const requestUrl =
+      new URL(
+        request.url ??
+        "/",
+
+        "http://127.0.0.1",
+      );
+
+    if (
+      request.method ===
+        "POST"
+    ) {
+      const contentType =
+        request.headers[
+          "content-type"
+        ] ??
+        "";
+
+      if (
+        !contentType
+          .toLowerCase()
+          .startsWith(
+            "application/json",
+          )
+      ) {
+        this.json(
+          response,
+          415,
+          {
+            error:
+              "Content-Type must be application/json.",
+          },
+        );
+
+        return;
+      }
+    }
+    /*
+     * ========================================================
+     * RPAS M102.2 - Read-only model discovery API
+     * ========================================================
+     *
+     * USER MODE SECURITY BOUNDARY
+     *
+     * Returns only the product-facing RPAS model descriptors
+     * defined by RPASModelRegistry.
+     *
+     * No source paths.
+     * No Blender paths.
+     * No adapter paths.
+     * No formulas.
+     * No filesystem disclosure.
+     * No execution authority.
+     * No evidence mutation.
+     * ========================================================
+     */
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/models"
+    ) {
+      const experimentId =
+        requestUrl.searchParams.get(
+          "experimentId",
+        );
+
+      if (
+        experimentId !==
+          null
+      ) {
+        const model =
+          getRPASModelForExperiment(
+            experimentId,
+          );
+
+        if (
+          model ===
+            undefined
+        ) {
+          this.json(
+            response,
+            404,
+            {
+              error:
+                "RPAS model not found for experiment.",
+            },
+          );
+
+          return;
+        }
+
+        this.json(
+          response,
+          200,
+          {
+            schema:
+              "RPAS_MODEL_DISCOVERY_V1",
+
+            access:
+              "READ_ONLY",
+
+            model,
+          },
+        );
+
+        return;
+      }
+
+      const models =
+        listRPASModels();
+
+      this.json(
+        response,
+        200,
+        {
+          schema:
+            "RPAS_MODEL_DISCOVERY_V1",
+
+          access:
+            "READ_ONLY",
+
+          count:
+            models.length,
+
+          models,
+        },
+      );
+
+      return;
+    }
+    /*
+     * ======================================================
+     * RPAS M102.5 - Amplifier User Mode API
+     * ======================================================
+     *
+     * Sanitized product state only.
+     * ======================================================
+     */
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/amplifier/latest"
+    ) {
+      const amplifierState =
+        this.latestAmplifierExecutionState;
+
+      if (
+        amplifierState ===
+          null
+      ) {
+        this.json(
+          response,
+          404,
+          {
+            error:
+              "No Amplifier execution state is available. Open the BioGlow cockpit to generate the visualization-linked Amplifier state.",
+          },
+        );
+
+        return;
+      }
+
+      const requestedExperimentId =
+        requestUrl.searchParams.get(
+          "experimentId",
+        );
+
+      if (
+        requestedExperimentId !==
+          null &&
+        requestedExperimentId.length >
+          0 &&
+        amplifierState
+          .experimentId !==
+          requestedExperimentId
+      ) {
+        this.json(
+          response,
+          404,
+          {
+            error:
+              "No Amplifier execution state is available for the selected experiment.",
+          },
+        );
+
+        return;
+      }
+
+      if (
+        amplifierState.status !==
+          "COMPLETED"
+      ) {
+        this.json(
+          response,
+          409,
+          {
+            error:
+              "Amplifier response exists but execution cohesion is not complete.",
+          },
+        );
+
+        return;
+      }
+
+      this.json(
+        response,
+        200,
+        amplifierState,
+      );
+
+      return;
+    }
+
+
+
+
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/dashboard"
+    ) {
+      this.json(
+        response,
+        200,
+        this.data.dashboard(),
+      );
+
+      return;
+    }
+
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/history"
+    ) {
+      this.json(
+        response,
+        200,
+        {
+          history:
+            this.data.history(
+              100,
+            ),
+        },
+      );
+
+      return;
+    }
+
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/telemetry"
+    ) {
+      const executionId =
+        requestUrl
+          .searchParams
+          .get(
+            "executionId",
+          );
+
+      if (
+        executionId ===
+          null ||
+        executionId
+          .trim()
+          .length ===
+          0
+      ) {
+        this.json(
+          response,
+          400,
+          {
+            error:
+              "executionId is required.",
+          },
+        );
+
+        return;
+      }
+
+      const telemetry =
+        this.data
+          .telemetryByExecutionId(
+            executionId,
+          );
+
+      if (
+        telemetry ===
+        null
+      ) {
+        this.json(
+          response,
+          404,
+          {
+            error:
+              "Telemetry was not found for this execution.",
+          },
+        );
+
+        return;
+      }
+
+      this.json(
+        response,
+        200,
+        telemetry,
+      );
+
+      return;
+    }
+
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/telemetry/latest"
+    ) {
+      this.json(
+        response,
+        200,
+        this.data
+          .latestTelemetry(),
+      );
+
+      return;
+    }
+
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/evidence"
+    ) {
+      this.json(
+        response,
+        200,
+        {
+          evidence:
+            this.data
+              .evidenceHistory(
+                100,
+              ),
+        },
+      );
+
+      return;
+    }
+
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/evidence/latest"
+    ) {
+      this.json(
+        response,
+        200,
+        this.data
+          .latestEvidence(),
+      );
+
+      return;
+    }
+
+
+   if (
+  request.method ===
+    "GET" &&
+  requestUrl.pathname ===
+    "/api/public/experiments"
+) {
+  this.json(
+    response,
+    200,
+    {
+      experiments:
+        this.data
+          .publicExperiments(),
+    },
+  );
+
+  return;
+}
+
+    if (
+      request.method ===
+        "POST" &&
+      requestUrl.pathname ===
+        "/api/experiments"
+    ) {
+      const body =
+        await this.readBody(
+          request,
+        );
+
+      /*
+       * ====================================================
+       * RPAS M103.3 - MODEL / SETUP EXECUTION BINDING
+       * ====================================================
+       *
+       * Experiment identity, model identity, and model-owned
+       * setup identity remain separate authorities.
+       *
+       * Legacy experiment binding remains supported.
+       */
+
+      const executionExperimentId =
+        this.requireText(
+          body.experimentId,
+          "experimentId",
+        );
+
+      const requestedModelId =
+        this.optionalTextInput(
+          body.modelId,
+          "modelId",
+        );
+
+      const requestedSetupId =
+        this.optionalTextInput(
+          body.setupId,
+          "setupId",
+        );
+
+      const resolvedExecutionModel =
+        requestedModelId !==
+          undefined
+          ? getRPASModel(
+              requestedModelId,
+            )
+          : getRPASModelForExperiment(
+              executionExperimentId,
+            );
+
+      if (
+        requestedModelId !==
+          undefined &&
+        resolvedExecutionModel ===
+          undefined
+      ) {
+        throw new Error(
+          `RPAS model is not registered: ${requestedModelId}`,
+        );
+      }
+
+      if (
+        requestedSetupId !==
+          undefined &&
+        resolvedExecutionModel ===
+          undefined
+      ) {
+        throw new Error(
+          "A setupId requires a resolved RPAS model.",
+        );
+      }
+
+      const resolvedExecutionSetup =
+        requestedSetupId !==
+          undefined &&
+        resolvedExecutionModel !==
+          undefined
+          ? resolvedExecutionModel
+              .experimentSetups
+              .find(
+                (
+                  setup,
+                ) =>
+                  setup.id
+                    .trim()
+                    .toUpperCase() ===
+                  requestedSetupId
+                    .trim()
+                    .toUpperCase(),
+              )
+          : undefined;
+
+      if (
+        requestedSetupId !==
+          undefined &&
+        resolvedExecutionSetup ===
+          undefined
+      ) {
+        throw new Error(
+          (
+            "Experiment setup is not registered for model " +
+            `${resolvedExecutionModel?.id ?? "UNKNOWN"}: ` +
+            requestedSetupId
+          ),
+        );
+      }
+
+      if (
+        resolvedExecutionSetup !==
+          undefined
+      ) {
+        const missingRequiredInputs =
+          resolvedExecutionSetup
+            .operatorInputs
+            .filter(
+              (
+                input,
+              ) =>
+                input.required,
+            )
+            .filter(
+              (
+                input,
+              ) => {
+                const value =
+                  body[
+                    input.id
+                  ];
+
+                if (
+                  value ===
+                    undefined ||
+                  value ===
+                    null
+                ) {
+                  return true;
+                }
+
+                if (
+                  typeof value ===
+                    "string" &&
+                  value.trim().length ===
+                    0
+                ) {
+                  return true;
+                }
+
+                return false;
+              },
+            );
+
+        if (
+          missingRequiredInputs.length >
+            0
+        ) {
+          throw new RPASRequestValidationError(
+            (
+              "Missing required model setup input(s): " +
+              missingRequiredInputs
+                .map(
+                  (
+                    input,
+                  ) =>
+                    input.id,
+                )
+                .join(
+                  ", ",
+                )
+            ),
+          );
+        }
+
+        for (
+          const input of
+            resolvedExecutionSetup
+              .operatorInputs
+        ) {
+          const value =
+            body[
+              input.id
+            ];
+
+          if (
+            value ===
+              undefined ||
+            value ===
+              null
+          ) {
+            continue;
+          }
+
+          if (
+            input.valueType ===
+              "text"
+          ) {
+            if (
+              typeof value !==
+                "string"
+            ) {
+              throw new RPASRequestValidationError(
+                (
+                  input.id +
+                  " must be text."
+                ),
+              );
+            }
+
+            continue;
+          }
+
+          if (
+            input.valueType ===
+              "number"
+          ) {
+            if (
+              typeof value !==
+                "number" ||
+              !Number.isFinite(
+                value,
+              )
+            ) {
+              throw new RPASRequestValidationError(
+                (
+                  input.id +
+                  " must be a finite number."
+                ),
+              );
+            }
+
+            const unitSuffix =
+              input.unit !==
+                undefined
+                ? (
+                    " " +
+                    input.unit
+                  )
+                : "";
+
+            if (
+              input.minimum !==
+                undefined &&
+              value <
+                input.minimum
+            ) {
+              throw new RPASRequestValidationError(
+                (
+                  input.id +
+                  " must be greater than or equal to " +
+                  input.minimum +
+                  unitSuffix +
+                  "."
+                ),
+              );
+            }
+
+            if (
+              input.maximum !==
+                undefined &&
+              value >
+                input.maximum
+            ) {
+              throw new RPASRequestValidationError(
+                (
+                  input.id +
+                  " must be less than or equal to " +
+                  input.maximum +
+                  unitSuffix +
+                  "."
+                ),
+              );
+            }
+          }
+        }
+
+      }
+
+      const requestProvenanceProbe =
+        createExperimentRequest({
+          experimentId:
+            this.requireText(
+              body.experimentId,
+              "experimentId",
+            ),
+
+          material:
+            this.requireText(
+              body.material,
+              "material",
+            ),
+
+          wavelengthNm:
+            this.optionalNumberInput(
+              body.wavelengthNm,
+              "wavelengthNm",
+            ),
+
+          acousticFrequencyGHz:
+            this.optionalNumberInput(
+              body.acousticFrequencyGHz,
+              "acousticFrequencyGHz",
+            ),
+
+          temperatureCelsius:
+            this.optionalNumberInput(
+              body.temperatureCelsius,
+              "temperatureCelsius",
+            ),
+
+          soundVelocityMps:
+            this.optionalNumberInput(
+              body.soundVelocityMps,
+              "soundVelocityMps",
+            ),
+
+          calibrationOffsetGHz:
+            this.optionalNumberInput(
+              body.calibrationOffsetGHz,
+              "calibrationOffsetGHz",
+            ),
+
+          inputWatts:
+            this.optionalNumberInput(
+              body.inputWatts,
+              "inputWatts",
+            ),
+
+          voltageVolts:
+            this.optionalNumberInput(
+              body.voltageVolts,
+              "voltageVolts",
+            ),
+
+          currentAmps:
+            this.optionalNumberInput(
+              body.currentAmps,
+              "currentAmps",
+            ),
+
+          operator:
+            this.optionalTextInput(
+              body.operator,
+              "operator",
+            ),
+
+          project:
+            this.optionalTextInput(
+              body.project,
+              "project",
+            ),
+
+          notes:
+            this.optionalTextInput(
+              body.notes,
+              "notes",
+            ),
+        });
+
+      /*
+       * ----------------------------------------------------
+       * RUNTIME CALIBRATION RESOLUTION
+       * ----------------------------------------------------
+       *
+       * Precedence:
+       *
+       * 1. explicit calibrationOffsetGHz from request
+       * 2. active promoted persisted calibration
+       * 3. explicitly configured Studio fallback policy
+       *
+       * The calibration resolver does not redefine the
+       * experiment request's overall input provenance.
+       */
+
+      const calibrationResolution =
+        resolveRuntimeCalibration({
+          rootDirectory:
+            this.calibrationRootDirectory,
+
+          explicitCalibrationOffsetGHz:
+            this.optionalNumberInput(
+              body.calibrationOffsetGHz,
+              "calibrationOffsetGHz",
+            ),
+
+          missingActiveCalibrationPolicy:
+            this.missingActiveCalibrationPolicy,
+        });
+
+
+      const experimentRequest =
+        createExperimentRequest({
+          ...requestProvenanceProbe,
+
+          /*
+           * M103.4
+           *
+           * Carry canonical registered model/setup identity into
+           * execution without changing experiment identity.
+           */
+          modelId:
+            resolvedExecutionModel
+              ?.id,
+
+          setupId:
+            resolvedExecutionSetup
+              ?.id,
+
+          calibrationOffsetGHz:
+            calibrationResolution.value,
+
+          /*
+           * Preserve provenance derived from what the user
+           * actually supplied before runtime calibration was
+           * injected.
+           */
+          inputProvenance:
+            requestProvenanceProbe
+              .inputProvenance,
+        });
+
+
+      /*
+       * ----------------------------------------------------
+       * VERIFIED LABORATORY EVIDENCE ATTACHMENT
+       * ----------------------------------------------------
+       *
+       * Both paths are optional.
+       *
+       * If neither is supplied, Studio preserves the
+       * pre-M4.6 execution behavior.
+       *
+       * If either is supplied, both must be supplied and the
+       * package/seal pair must independently verify for this
+       * experiment before execution proceeds.
+       */
+
+      const laboratoryEvidence =
+        RPASStudioLaboratoryEvidenceResolver
+          .resolve({
+            experimentId:
+              experimentRequest.experimentId,
+
+            packagePath:
+              this.optionalTextInput(
+                body.laboratoryPackagePath,
+                "laboratoryPackagePath",
+              ),
+
+            sealPath:
+              this.optionalTextInput(
+                body.laboratorySealPath,
+                "laboratorySealPath",
+              ),
+          });
+
+
+      /*
+       * ----------------------------------------------------
+       * M5 VERIFIED LABORATORY RUN EVIDENCE
+       * ----------------------------------------------------
+       *
+       * This authority is independent from the existing
+       * experiment-level laboratory package authority.
+       *
+       * An explicit run record/seal pair must independently
+       * verify before Studio execution proceeds.
+       */
+
+      const laboratoryRunEvidence =
+        RPASStudioLaboratoryRunEvidenceResolver
+          .resolve({
+            experimentId:
+              experimentRequest.experimentId,
+
+            recordPath:
+              this.optionalTextInput(
+                body.laboratoryRunEvidencePath,
+                "laboratoryRunEvidencePath",
+              ),
+
+            sealPath:
+              this.optionalTextInput(
+                body.laboratoryRunEvidenceSealPath,
+                "laboratoryRunEvidenceSealPath",
+              ),
+          });
+
+
+      /*
+       * BioGlow profile bridge.
+       *
+       * Generic V1.1 experiments continue through the
+       * existing execution path unchanged.
+       *
+       * Rich BioGlow values remain undefined unless they
+       * were explicitly supplied by Studio.
+       */
+
+      const isBioGlow =
+        resolvedExecutionModel
+          ?.id
+          .trim()
+          .toUpperCase() ===
+        "RPAS-BIOGLOW-V1";
+
+      const bioGlowSimulationInputs:
+        BioGlowSimulationInputs | undefined =
+        isBioGlow
+          ? resolveBioGlowSimulationInputs({
+              inputWatts:
+                this.optionalNumberInput(
+                  body.inputWatts,
+                  "inputWatts",
+                ),
+
+              resonanceMatch:
+                this.optionalNumberInput(
+                  body.resonanceMatch,
+                  "resonanceMatch",
+                ),
+
+              materialResponse:
+                this.optionalNumberInput(
+                  body.materialResponse,
+                  "materialResponse",
+                ),
+
+              opticalExtraction:
+                this.optionalNumberInput(
+                  body.opticalExtraction,
+                  "opticalExtraction",
+                ),
+
+              coherence:
+                this.optionalNumberInput(
+                  body.coherence,
+                  "coherence",
+                ),
+
+              coupling:
+                this.optionalNumberInput(
+                  body.coupling,
+                  "coupling",
+                ),
+
+              lossFactor:
+                this.optionalNumberInput(
+                  body.lossFactor,
+                  "lossFactor",
+                ),
+            })
+          : undefined;
+
+      /*
+       * M104.5 - MODEL-OWNED MEASUREMENT ACTIVATION
+       *
+       * A registered setup owns capability + activation policy.
+       * This produces experiment intent only. It does not
+       * create or claim physical evidence measurements.
+       *
+       * Undefined preserves the existing optional no-setup
+       * compatibility path.
+       */
+      const activeMeasurementTypes =
+        resolvedExecutionSetup ===
+          undefined
+          ? undefined
+          : resolveRPASModelMeasurementActivation({
+              setup:
+                resolvedExecutionSetup,
+
+              inputValues:
+                body,
+            });
+
+
+      const experimentProfile =
+        isBioGlow
+          ? resolveExperimentProfile({
+              experimentId:
+                resolvedExecutionModel
+                  ?.experimentId ??
+                experimentRequest
+                  .experimentId,
+
+              material:
+                experimentRequest
+                  .material,
+
+              acousticFrequencyGHz:
+                experimentRequest
+                  .acousticFrequencyGHz,
+
+              temperatureCelsius:
+                experimentRequest
+                  .temperatureCelsius,
+
+              voltageVolts:
+                this.optionalNumberInput(
+                  body.voltageVolts,
+                  "voltageVolts",
+                ),
+
+              currentAmps:
+                this.optionalNumberInput(
+                  body.currentAmps,
+                  "currentAmps",
+                ),
+
+              targetPressurePascals:
+                this.optionalNumberInput(
+                  body.targetPressurePascals,
+                  "targetPressurePascals",
+                ),
+
+              targetForceNewtons:
+                this.optionalNumberInput(
+                  body.targetForceNewtons,
+                  "targetForceNewtons",
+                ),
+
+              gapDistanceMillimeters:
+                this.optionalNumberInput(
+                  body.gapDistanceMillimeters,
+                  "gapDistanceMillimeters",
+                ),
+
+              activeMeasurementTypes,
+
+              createdAt:
+                new Date()
+                  .toISOString(),
+            })
+          : undefined;
+
+      const executionCalibration =
+        createExecutionCalibrationIdentity(
+          calibrationResolution,
+        );
+
+
+      const result =
+        this.engine
+          .executeSequence(
+            experimentRequest,
+            undefined,
+            {
+              /*
+               * Canonical run intent only.
+               *
+               * This does not create physical measurement
+               * or evidence authority.
+               */
+              activeMeasurementTypes,
+
+              calibration:
+                executionCalibration,
+
+              calibrationAuthorityRootDirectory:
+                this.calibrationRootDirectory,
+            },
+          );
+
+      const telemetry =
+        this.data.readJson(
+          result.telemetryPath,
+        );
+
+      const evidence =
+        this.data
+          .evidenceStatus(
+            result.evidencePath,
+          );
+
+      const visualization =
+        this.buildBlenderVisualization(
+          result.telemetryPath,
+          bioGlowSimulationInputs,
+          resolvedExecutionModel
+            ?.id,
+        );
+
+      /*
+       * ----------------------------------------------------
+       * RPAS EXECUTION CONVERGENCE M1
+       * ----------------------------------------------------
+       *
+       * This record links authorities already produced by
+       * the execution.
+       *
+       * It does not create physical measurement authority,
+       * engineering-state authority, or scientific truth.
+       */
+
+      if (
+        telemetry ===
+          null
+      ) {
+        throw new Error(
+          "Execution telemetry could not be loaded for convergence.",
+        );
+      }
+
+
+      const convergenceExecutionId =
+        this.requireText(
+          telemetry.executionId,
+          "telemetry.executionId",
+        );
+
+
+      
+      /*
+       * RPAS M102.5 execution cohesion.
+       *
+       * At this point the existing RPAS flow has already
+       * resolved telemetry/evidence and produced visualization.
+       *
+       * Evidence is deliberately reported as RECORDED here.
+       * Verification remains owned by the Evidence authority.
+       */
+      if (
+        this.latestAmplifierExecutionState !==
+          null &&
+        this.latestAmplifierExecutionState
+          .executionId ===
+          convergenceExecutionId
+      ) {
+        this.latestAmplifierExecutionState =
+          Object.freeze({
+            ...this.latestAmplifierExecutionState,
+
+            status:
+              "COMPLETED",
+
+            evidence:
+              "RECORDED",
+
+            visualization:
+              "READY",
+          });
+      }
+const engineeringState =
+        RPASExecutionEngineeringStateBuilder
+          .buildAndWrite({
+            projectRoot:
+              this.data.projectRoot,
+
+            telemetry,
+
+            calibration:
+              executionCalibration,
+
+            evidenceVerified:
+              evidence.verified,
+
+            visualization:
+              visualization,
+          });
+
+      const cockpitState =
+        RPASExecutionCockpitStateBuilder
+          .build(
+            engineeringState.snapshot,
+
+            laboratoryEvidence,
+          );
+
+
+      const cockpitPath =
+        RPASExecutionCockpitStateExporter
+          .export(
+            cockpitState,
+            this.data.projectRoot,
+          );
+
+      const convergence =
+        RPASExecutionConvergenceBuilder
+          .buildAndWrite({
+            projectRoot:
+              this.data.projectRoot,
+
+            projectLabel:
+              experimentRequest.project,
+
+            experimentId:
+              experimentRequest.experimentId,
+
+            registeredModelId:
+              experimentRequest.modelId,
+
+            registeredSetupId:
+              experimentRequest.setupId,
+            executionId:
+              convergenceExecutionId,
+
+            telemetryPath:
+              result.telemetryPath,
+
+            evidencePath:
+              result.evidencePath,
+
+            evidenceId:
+              result.envelopeId,
+
+            evidenceVerified:
+              evidence.verified,
+
+            calibration:
+              executionCalibration,
+
+            experimentProfile:
+              experimentProfile ===
+                undefined
+                ? undefined
+                : {
+                    id:
+                      experimentProfile.id,
+
+                    revision:
+                      experimentProfile.revision,
+                  },
+
+            visualization:
+              visualization,
+
+            ...(
+              laboratoryEvidence ===
+                undefined
+                ? {}
+                : {
+                    laboratoryEvidence: {
+                      packagePath:
+                        laboratoryEvidence.packagePath,
+
+                      sealPath:
+                        laboratoryEvidence.sealPath,
+                    },
+                  }
+            ),
+
+            ...(
+              laboratoryRunEvidence ===
+                undefined
+                ? {}
+                : {
+                    laboratoryRunEvidence: {
+                      recordPath:
+                        laboratoryRunEvidence.recordPath,
+
+                      sealPath:
+                        laboratoryRunEvidence.sealPath,
+                    },
+                  }
+            ),
+
+            engineeringState: {
+              snapshotId:
+                engineeringState.snapshot.snapshotId,
+
+              snapshotPath:
+                engineeringState.snapshotPath,
+            },
+
+            cockpit: {
+              stateId:
+                cockpitState.stateId,
+
+              statePath:
+                cockpitPath,
+
+              overallStatus:
+                cockpitState.overallStatus,
+            },
+          });
+
+
+      /*
+       * ----------------------------------------------------
+       * M6.10 STUDIO COCKPIT RUN-EVIDENCE INTEGRATION
+       * ----------------------------------------------------
+       *
+       * Studio does not promote run-evidence verification
+       * into physical-measurement authority.
+       *
+       * The projection is created only from the completed
+       * convergence manifest, which independently verifies
+       * the laboratory run evidence pair.
+       */
+
+      const cockpitLaboratoryRunEvidence =
+        laboratoryRunEvidence ===
+          undefined
+          ? undefined
+          : RPASExecutionCockpitLaboratoryRunEvidenceProjector
+              .project(
+                convergence.manifest,
+              );
+
+
+      if (
+        cockpitLaboratoryRunEvidence !==
+          undefined
+      ) {
+        if (
+          cockpitLaboratoryRunEvidence
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Studio cockpit laboratory run evidence manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          cockpitLaboratoryRunEvidence
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Studio cockpit laboratory run evidence experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          cockpitLaboratoryRunEvidence
+            .authority !==
+              "VERIFIED_LABORATORY_RUN_EVIDENCE"
+        ) {
+          throw new Error(
+            "Studio cockpit laboratory run evidence authority is invalid.",
+          );
+        }
+
+
+        if (
+          cockpitLaboratoryRunEvidence
+            .verificationStatus !==
+              "PASS"
+        ) {
+          throw new Error(
+            "Studio cockpit laboratory run evidence verification must PASS.",
+          );
+        }
+
+
+        if (
+          cockpitLaboratoryRunEvidence
+            .status !==
+              "READY"
+        ) {
+          throw new Error(
+            "Studio cockpit laboratory run evidence must be READY.",
+          );
+        }
+
+
+        if (
+          cockpitLaboratoryRunEvidence
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Studio cockpit laboratory run evidence must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          cockpitLaboratoryRunEvidence
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Studio cockpit laboratory run evidence must not claim physical confirmation.",
+          );
+        }
+      }
+
+      const persistedCockpitLaboratoryRunEvidence =
+        cockpitLaboratoryRunEvidence ===
+          undefined
+          ? undefined
+          : RPASExecutionCockpitLaboratoryRunEvidenceStateExporter
+              .export(
+                cockpitLaboratoryRunEvidence,
+                this.data.projectRoot,
+                new Date()
+                  .toISOString(),
+              );
+
+
+      if (
+        persistedCockpitLaboratoryRunEvidence !==
+          undefined
+      ) {
+        if (
+          persistedCockpitLaboratoryRunEvidence
+            .state
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Persisted cockpit laboratory run evidence manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          persistedCockpitLaboratoryRunEvidence
+            .state
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Persisted cockpit laboratory run evidence experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          persistedCockpitLaboratoryRunEvidence
+            .state
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Persisted cockpit laboratory run evidence must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          persistedCockpitLaboratoryRunEvidence
+            .state
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Persisted cockpit laboratory run evidence must not claim physical confirmation.",
+          );
+        }
+      }
+
+      /*
+       * ----------------------------------------------------
+       * M6.13 VERIFIED PERSISTED COCKPIT RUN EVIDENCE
+       * ----------------------------------------------------
+       *
+       * Persisted authority is reconstructed from disk through
+       * the M6.12 verifier rather than trusting only the
+       * in-memory M6.11 export result.
+       */
+
+      const verifiedPersistedCockpitLaboratoryRunEvidence =
+        persistedCockpitLaboratoryRunEvidence ===
+          undefined
+          ? undefined
+          : RPASStudioPersistedCockpitLaboratoryRunEvidenceResolver
+              .resolve({
+                statePath:
+                  persistedCockpitLaboratoryRunEvidence.statePath,
+
+                expectedManifestId:
+                  convergence.manifest.manifestId,
+
+                expectedExperimentId:
+                  experimentRequest.experimentId,
+
+                expectedRunId:
+                  persistedCockpitLaboratoryRunEvidence
+                    .state
+                    .runId,
+
+                expectedRecordId:
+                  persistedCockpitLaboratoryRunEvidence
+                    .state
+                    .recordId,
+
+                expectedEnvelopeId:
+                  persistedCockpitLaboratoryRunEvidence
+                    .state
+                    .envelopeId,
+
+                expectedRecordSha256:
+                  persistedCockpitLaboratoryRunEvidence
+                    .state
+                    .recordSha256,
+
+                expectedSealSha256:
+                  persistedCockpitLaboratoryRunEvidence
+                    .state
+                    .sealSha256,
+              });
+
+
+      if (
+        persistedCockpitLaboratoryRunEvidence !==
+          undefined &&
+        verifiedPersistedCockpitLaboratoryRunEvidence !==
+          undefined
+      ) {
+        if (
+          verifiedPersistedCockpitLaboratoryRunEvidence
+            .stateId !==
+              persistedCockpitLaboratoryRunEvidence
+                .state
+                .stateId
+        ) {
+          throw new Error(
+            "Verified persisted cockpit laboratory run evidence state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitLaboratoryRunEvidence
+            .stateSha256 !==
+              persistedCockpitLaboratoryRunEvidence
+                .stateSha256
+        ) {
+          throw new Error(
+            "Verified persisted cockpit laboratory run evidence state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitLaboratoryRunEvidence
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Verified persisted cockpit laboratory run evidence manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitLaboratoryRunEvidence
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Verified persisted cockpit laboratory run evidence experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitLaboratoryRunEvidence
+            .verificationStatus !==
+              "PASS"
+        ) {
+          throw new Error(
+            "Verified persisted cockpit laboratory run evidence verification did not PASS.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitLaboratoryRunEvidence
+            .cockpitStatus !==
+              "READY"
+        ) {
+          throw new Error(
+            "Verified persisted cockpit laboratory run evidence is not READY.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitLaboratoryRunEvidence
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Verified persisted cockpit laboratory run evidence must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitLaboratoryRunEvidence
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Verified persisted cockpit laboratory run evidence must not claim physical confirmation.",
+          );
+        }
+      }
+
+      /*
+       * ----------------------------------------------------
+       * M6.15 STUDIO VERIFIED PERSISTED RUN-EVIDENCE CONSUMPTION
+       * ----------------------------------------------------
+       *
+       * M6.13 establishes verified persisted-state authority.
+       *
+       * M6.14 defines the dedicated consumption authority for
+       * that verified persisted state.
+       *
+       * M6.15 integrates that consumption seam into Studio
+       * without re-verifying, reinterpreting, or upgrading the
+       * underlying laboratory or physical authority.
+       */
+
+      const consumedVerifiedPersistedCockpitLaboratoryRunEvidence =
+        verifiedPersistedCockpitLaboratoryRunEvidence ===
+          undefined
+          ? undefined
+          : RPASStudioVerifiedPersistedCockpitLaboratoryRunEvidenceConsumptionBridge
+              .consume({
+                verifiedPersistedState:
+                  verifiedPersistedCockpitLaboratoryRunEvidence,
+              });
+
+
+      if (
+        verifiedPersistedCockpitLaboratoryRunEvidence !==
+          undefined &&
+        consumedVerifiedPersistedCockpitLaboratoryRunEvidence !==
+          undefined
+      ) {
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .authority !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption authority is invalid.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .sourceAuthority !==
+              "VERIFIED_PERSISTED_COCKPIT_LABORATORY_RUN_EVIDENCE"
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence source authority is invalid.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .stateId !==
+              verifiedPersistedCockpitLaboratoryRunEvidence
+                .stateId
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption state identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .runId !==
+              verifiedPersistedCockpitLaboratoryRunEvidence
+                .runId
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption run identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .recordId !==
+              verifiedPersistedCockpitLaboratoryRunEvidence
+                .recordId
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption record identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .envelopeId !==
+              verifiedPersistedCockpitLaboratoryRunEvidence
+                .envelopeId
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption envelope identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .recordSha256 !==
+              verifiedPersistedCockpitLaboratoryRunEvidence
+                .recordSha256
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption record SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .sealSha256 !==
+              verifiedPersistedCockpitLaboratoryRunEvidence
+                .sealSha256
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption seal SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .stateSha256 !==
+              verifiedPersistedCockpitLaboratoryRunEvidence
+                .stateSha256
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .verificationStatus !==
+              "PASS"
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption verification did not PASS.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .cockpitStatus !==
+              "READY"
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption is not READY.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption must not claim physical confirmation.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence
+            .integrityMeaning !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio verified persisted cockpit run-evidence consumption integrity meaning is invalid.",
+          );
+        }
+      }
+
+      /*
+       * ----------------------------------------------------
+       * M6.18 VERIFIED PERSISTED CONSUMPTION-STATE RESOLUTION
+       * ----------------------------------------------------
+       *
+       * M6.15 produces the verified persisted run-evidence
+       * consumption authority.
+       *
+       * M6.16 persists that consumption authority.
+       *
+       * M6.17 independently reloads and verifies the persisted
+       * consumption state.
+       *
+       * M6.18 integrates both operations into Studio without
+       * upgrading laboratory or physical authority.
+       */
+
+      const persistedVerifiedCockpitRunEvidenceConsumptionState =
+        consumedVerifiedPersistedCockpitLaboratoryRunEvidence ===
+          undefined
+          ? undefined
+          : RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateExporter
+              .export(
+                consumedVerifiedPersistedCockpitLaboratoryRunEvidence,
+
+
+                this.data.projectRoot,
+                new Date()
+                  .toISOString(),
+              );
+
+
+      const verifiedPersistedCockpitRunEvidenceConsumptionState =
+        persistedVerifiedCockpitRunEvidenceConsumptionState ===
+          undefined
+          ? undefined
+          : RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateResolver
+              .resolve({
+                statePath:
+                  persistedVerifiedCockpitRunEvidenceConsumptionState
+                    .statePath,
+
+                expectedSourceStateId:
+                  consumedVerifiedPersistedCockpitLaboratoryRunEvidence!
+                    .stateId,
+
+                expectedManifestId:
+                  convergence.manifest.manifestId,
+
+                expectedExperimentId:
+                  experimentRequest.experimentId,
+
+                expectedRunId:
+                  consumedVerifiedPersistedCockpitLaboratoryRunEvidence!
+                    .runId,
+
+                expectedRecordId:
+                  consumedVerifiedPersistedCockpitLaboratoryRunEvidence!
+                    .recordId,
+
+                expectedEnvelopeId:
+                  consumedVerifiedPersistedCockpitLaboratoryRunEvidence!
+                    .envelopeId,
+
+                expectedRecordSha256:
+                  consumedVerifiedPersistedCockpitLaboratoryRunEvidence!
+                    .recordSha256,
+
+                expectedSealSha256:
+                  consumedVerifiedPersistedCockpitLaboratoryRunEvidence!
+                    .sealSha256,
+
+                expectedSourceStateSha256:
+                  consumedVerifiedPersistedCockpitLaboratoryRunEvidence!
+                    .stateSha256,
+              });
+
+
+      if (
+        persistedVerifiedCockpitRunEvidenceConsumptionState !==
+          undefined &&
+        verifiedPersistedCockpitRunEvidenceConsumptionState !==
+          undefined
+      ) {
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .stateId !==
+              persistedVerifiedCockpitRunEvidenceConsumptionState
+                .state
+                .stateId
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .stateSha256 !==
+              persistedVerifiedCockpitRunEvidenceConsumptionState
+                .stateSha256
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .sourceStateId !==
+              consumedVerifiedPersistedCockpitLaboratoryRunEvidence!
+                .stateId
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state source state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .verificationStatus !==
+              "PASS"
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state verification did not PASS.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .cockpitStatus !==
+              "READY"
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state is not READY.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state must not claim physical confirmation.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionState
+            .integrityMeaning !==
+              "STUDIO_VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_RESOLUTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio persisted consumption-state resolution integrity meaning is invalid.",
+          );
+        }
+      }
+
+
+      /*
+       * ----------------------------------------------------
+       * M6.20 STUDIO VERIFIED PERSISTED CONSUMPTION-STATE
+       * CONSUMPTION
+       * ----------------------------------------------------
+       *
+       * M6.18 establishes independently verified persisted
+       * consumption-state authority.
+       *
+       * M6.19 provides the dedicated consumption seam.
+       *
+       * M6.20 integrates that seam into Studio without
+       * re-verifying, reinterpreting, or upgrading laboratory
+       * or physical authority.
+       */
+
+      const consumedVerifiedPersistedCockpitRunEvidenceConsumptionState =
+        verifiedPersistedCockpitRunEvidenceConsumptionState ===
+          undefined
+          ? undefined
+          : RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionBridge
+              .consume({
+                verifiedPersistedConsumptionState:
+                  verifiedPersistedCockpitRunEvidenceConsumptionState,
+              });
+
+
+      if (
+        verifiedPersistedCockpitRunEvidenceConsumptionState !==
+          undefined &&
+        consumedVerifiedPersistedCockpitRunEvidenceConsumptionState !==
+          undefined
+      ) {
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .authority !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio M6.20 persisted consumption-state consumption authority is invalid.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .stateId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .stateId
+        ) {
+          throw new Error(
+            "Studio M6.20 persisted consumption-state identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .sourceStateId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .sourceStateId
+        ) {
+          throw new Error(
+            "Studio M6.20 source state identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Studio M6.20 manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Studio M6.20 experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .runId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .runId
+        ) {
+          throw new Error(
+            "Studio M6.20 run identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .recordId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .recordId
+        ) {
+          throw new Error(
+            "Studio M6.20 record identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .envelopeId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .envelopeId
+        ) {
+          throw new Error(
+            "Studio M6.20 envelope identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .recordPath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .recordPath
+        ) {
+          throw new Error(
+            "Studio M6.20 record path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .sealPath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .sealPath
+        ) {
+          throw new Error(
+            "Studio M6.20 seal path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .recordSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .recordSha256
+        ) {
+          throw new Error(
+            "Studio M6.20 record SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .sealSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .sealSha256
+        ) {
+          throw new Error(
+            "Studio M6.20 seal SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .sourceStatePath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .sourceStatePath
+        ) {
+          throw new Error(
+            "Studio M6.20 source state path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .sourceStateSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .sourceStateSha256
+        ) {
+          throw new Error(
+            "Studio M6.20 source state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .statePath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .statePath
+        ) {
+          throw new Error(
+            "Studio M6.20 state path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .stateSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionState
+                .stateSha256
+        ) {
+          throw new Error(
+            "Studio M6.20 state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .verificationStatus !==
+              "PASS"
+        ) {
+          throw new Error(
+            "Studio M6.20 persisted consumption-state consumption verification did not PASS.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .cockpitStatus !==
+              "READY"
+        ) {
+          throw new Error(
+            "Studio M6.20 persisted consumption-state consumption is not READY.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Studio M6.20 must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Studio M6.20 must not claim physical confirmation.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+            .integrityMeaning !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio M6.20 persisted consumption-state consumption integrity meaning is invalid.",
+          );
+        }
+      }
+
+      /*
+       * ----------------------------------------------------
+       * M6.23 VERIFIED PERSISTED CONSUMPTION-STATE-
+       * CONSUMPTION-STATE RESOLUTION
+       * ----------------------------------------------------
+       *
+       * M6.20 provides the verified consumption authority.
+       * M6.21 persists that authority.
+       * M6.22 independently verifies the persisted state.
+       * M6.23 integrates persistence + independent resolution
+       * into Studio without upgrading physical authority.
+       */
+
+      const persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionState =
+        consumedVerifiedPersistedCockpitRunEvidenceConsumptionState ===
+          undefined
+          ? undefined
+          : RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateExporter
+              .export(
+                consumedVerifiedPersistedCockpitRunEvidenceConsumptionState,
+                this.data.projectRoot,
+                new Date()
+                  .toISOString(),
+              );
+
+
+      const verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState =
+        persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionState ===
+          undefined
+          ? undefined
+          : RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateResolver
+              .resolve({
+                statePath:
+                  persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionState
+                    .statePath,
+
+                expectedSourceConsumptionStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .stateId,
+
+                expectedSourceStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .sourceStateId,
+
+                expectedManifestId:
+                  convergence.manifest.manifestId,
+
+                expectedExperimentId:
+                  experimentRequest.experimentId,
+
+                expectedRunId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .runId,
+
+                expectedRecordId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .recordId,
+
+                expectedEnvelopeId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .envelopeId,
+
+                expectedRecordSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .recordSha256,
+
+                expectedSealSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .sealSha256,
+
+                expectedSourceStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .sourceStateSha256,
+
+                expectedSourceConsumptionStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionState!
+                    .stateSha256,
+              });
+
+
+      if (
+        persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionState !==
+          undefined &&
+        verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState !==
+          undefined &&
+        consumedVerifiedPersistedCockpitRunEvidenceConsumptionState !==
+          undefined
+      ) {
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .stateId !==
+              persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionState
+                .state
+                .stateId
+        ) {
+          throw new Error(
+            "Studio M6.23 persisted consumption-state-consumption-state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .stateSha256 !==
+              persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionState
+                .stateSha256
+        ) {
+          throw new Error(
+            "Studio M6.23 persisted consumption-state-consumption-state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sourceConsumptionStateId !==
+              consumedVerifiedPersistedCockpitRunEvidenceConsumptionState
+                .stateId
+        ) {
+          throw new Error(
+            "Studio M6.23 source consumption-state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Studio M6.23 manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Studio M6.23 experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .verificationStatus !==
+              "PASS"
+        ) {
+          throw new Error(
+            "Studio M6.23 persisted state verification did not PASS.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .cockpitStatus !==
+              "READY"
+        ) {
+          throw new Error(
+            "Studio M6.23 persisted state is not READY.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .authority !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_STATE"
+        ) {
+          throw new Error(
+            "Studio M6.23 persisted state authority is invalid.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Studio M6.23 must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Studio M6.23 must not claim physical confirmation.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .integrityMeaning !==
+              "STUDIO_VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_STATE_RESOLUTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio M6.23 persisted-state resolution integrity meaning is invalid.",
+          );
+        }
+      }
+
+      /*
+       * ----------------------------------------------------
+       * M6.25 STUDIO VERIFIED PERSISTED CONSUMPTION-STATE-
+       * CONSUMPTION-STATE CONSUMPTION
+       * ----------------------------------------------------
+       *
+       * M6.23 establishes independently verified persisted
+       * consumption-state-consumption-state authority.
+       *
+       * M6.24 provides the dedicated consumption seam.
+       *
+       * M6.25 integrates that seam into Studio without
+       * upgrading laboratory or physical authority.
+       */
+
+      const consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState =
+        verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState ===
+          undefined
+          ? undefined
+          : RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionBridge
+              .consume({
+                verifiedPersistedConsumptionStateConsumptionState:
+                  verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState,
+
+              });
+
+
+      if (
+        verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState !==
+          undefined &&
+        consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState !==
+          undefined
+      ) {
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .authority !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_STATE_CONSUMPTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio M6.25 persisted consumption-state-consumption-state consumption authority is invalid.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sourceAuthority !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_STATE"
+        ) {
+          throw new Error(
+            "Studio M6.25 source authority is invalid.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .stateId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .stateId
+        ) {
+          throw new Error(
+            "Studio M6.25 state identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sourceConsumptionStateId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sourceConsumptionStateId
+        ) {
+          throw new Error(
+            "Studio M6.25 source consumption-state identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sourceStateId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sourceStateId
+        ) {
+          throw new Error(
+            "Studio M6.25 source state identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Studio M6.25 manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Studio M6.25 experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .runId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .runId
+        ) {
+          throw new Error(
+            "Studio M6.25 run identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .recordId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .recordId
+        ) {
+          throw new Error(
+            "Studio M6.25 record identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .envelopeId !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .envelopeId
+        ) {
+          throw new Error(
+            "Studio M6.25 envelope identity mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .recordPath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .recordPath
+        ) {
+          throw new Error(
+            "Studio M6.25 record path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sealPath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sealPath
+        ) {
+          throw new Error(
+            "Studio M6.25 seal path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .recordSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .recordSha256
+        ) {
+          throw new Error(
+            "Studio M6.25 record SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sealSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sealSha256
+        ) {
+          throw new Error(
+            "Studio M6.25 seal SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sourceStatePath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sourceStatePath
+        ) {
+          throw new Error(
+            "Studio M6.25 source state path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sourceStateSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sourceStateSha256
+        ) {
+          throw new Error(
+            "Studio M6.25 source state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sourceConsumptionStatePath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sourceConsumptionStatePath
+        ) {
+          throw new Error(
+            "Studio M6.25 source consumption-state path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .sourceConsumptionStateSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sourceConsumptionStateSha256
+        ) {
+          throw new Error(
+            "Studio M6.25 source consumption-state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .statePath !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .statePath
+        ) {
+          throw new Error(
+            "Studio M6.25 state path mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .stateSha256 !==
+              verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .stateSha256
+        ) {
+          throw new Error(
+            "Studio M6.25 state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .verificationStatus !==
+              "PASS"
+        ) {
+          throw new Error(
+            "Studio M6.25 verification status is invalid.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .cockpitStatus !==
+              "READY"
+        ) {
+          throw new Error(
+            "Studio M6.25 cockpit status is invalid.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .integrityMeaning !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_STATE_CONSUMPTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio M6.25 integrity meaning is invalid.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Studio M6.25 must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Studio M6.25 must not claim physical confirmation.",
+          );
+        }
+      }
+
+
+      /*
+       * ----------------------------------------------------
+       * M6.28 VERIFIED PERSISTED CONSUMPTION-STATE-
+       * CONSUMPTION-STATE-CONSUMPTION-STATE RESOLUTION
+       * ----------------------------------------------------
+       *
+       * M6.25 provides the Studio-integrated consumption
+       * authority.
+       *
+       * M6.26 persists that authority.
+       *
+       * M6.27 independently verifies the persisted state.
+       *
+       * M6.28 integrates persistence + independent
+       * verification into Studio without upgrading physical
+       * authority.
+       */
+
+      const persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState =
+        consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState ===
+          undefined
+          ? undefined
+          : RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateExporter
+              .export(
+                consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState,
+                this.data.projectRoot,
+                new Date()
+                  .toISOString(),
+              );
+
+
+      const verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState =
+        persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState ===
+          undefined
+          ? undefined
+          : RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateResolver
+              .resolve({
+                statePath:
+                  persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .statePath,
+
+                expectedSourceConsumptionStateConsumptionStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .stateId,
+
+                expectedSourceConsumptionStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .sourceConsumptionStateId,
+
+                expectedSourceStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .sourceStateId,
+
+                expectedManifestId:
+                  convergence.manifest.manifestId,
+
+                expectedExperimentId:
+                  experimentRequest.experimentId,
+
+                expectedRunId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .runId,
+
+                expectedRecordId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .recordId,
+
+                expectedEnvelopeId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .envelopeId,
+
+                expectedRecordSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .recordSha256,
+
+                expectedSealSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .sealSha256,
+
+                expectedSourceStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .sourceStateSha256,
+
+                expectedSourceConsumptionStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .sourceConsumptionStateSha256,
+
+                expectedSourceConsumptionStateConsumptionStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState!
+                    .stateSha256,
+              });
+
+
+      if (
+        persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState !==
+          undefined &&
+        verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState !==
+          undefined &&
+        consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState !==
+          undefined
+      ) {
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .stateId !==
+              persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                .state
+                .stateId
+        ) {
+          throw new Error(
+            "Studio M6.28 persisted consumption-state-consumption-state-consumption-state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .stateSha256 !==
+              persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                .stateSha256
+        ) {
+          throw new Error(
+            "Studio M6.28 persisted consumption-state-consumption-state-consumption-state SHA-256 mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .sourceConsumptionStateConsumptionStateId !==
+              consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .stateId
+        ) {
+          throw new Error(
+            "Studio M6.28 source consumption-state-consumption-state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .sourceConsumptionStateId !==
+              consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sourceConsumptionStateId
+        ) {
+          throw new Error(
+            "Studio M6.28 source consumption-state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .sourceStateId !==
+              consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState
+                .sourceStateId
+        ) {
+          throw new Error(
+            "Studio M6.28 source state identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .manifestId !==
+              convergence.manifest.manifestId
+        ) {
+          throw new Error(
+            "Studio M6.28 manifest identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .experimentId !==
+              experimentRequest.experimentId
+        ) {
+          throw new Error(
+            "Studio M6.28 experiment identity mismatch.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .verificationStatus !==
+              "PASS"
+        ) {
+          throw new Error(
+            "Studio M6.28 persisted state verification did not PASS.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .cockpitStatus !==
+              "READY"
+        ) {
+          throw new Error(
+            "Studio M6.28 persisted state is not READY.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .authority !==
+              "VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_STATE_CONSUMPTION_STATE"
+        ) {
+          throw new Error(
+            "Studio M6.28 persisted state authority is invalid.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .physicalMeasurementAvailable !==
+              false
+        ) {
+          throw new Error(
+            "Studio M6.28 must not establish physical measurement availability.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .physicalConfirmation !==
+              "NOT_CLAIMED"
+        ) {
+          throw new Error(
+            "Studio M6.28 must not claim physical confirmation.",
+          );
+        }
+
+
+        if (
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+            .integrityMeaning !==
+              "STUDIO_VERIFIED_PERSISTED_COCKPIT_RUN_EVIDENCE_CONSUMPTION_STATE_CONSUMPTION_STATE_CONSUMPTION_STATE_RESOLUTION_ONLY"
+        ) {
+          throw new Error(
+            "Studio M6.28 persisted-state resolution integrity meaning is invalid.",
+          );
+        }
+      }
+
+
+      /*
+       * ----------------------------------------------------
+       * M7.1 VERIFIED RUN EVIDENCE PRODUCT BOUNDARY
+       * ----------------------------------------------------
+       *
+       * M6.31 independently verifies the terminal persisted
+       * evidence state.
+       *
+       * M7.0 collapses the internal evidence machinery into
+       * a stable Studio-facing product contract.
+       *
+       * M7.1 surfaces only that clean product boundary.
+       */
+
+      const consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState =
+        verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState ===
+          undefined
+          ? undefined
+          : RPASStudioVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionBridge
+              .consume({
+                verifiedPersistedConsumptionStateConsumptionStateConsumptionState:
+                  verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState,
+              });
+
+
+      const persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionState =
+        consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState ===
+          undefined
+          ? undefined
+          : RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionStateExporter
+              .export(
+                consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState,
+                this.data.projectRoot,
+                new Date()
+                  .toISOString(),
+              );
+
+
+      const verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionState =
+        persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionState ===
+          undefined ||
+        consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState ===
+          undefined
+          ? undefined
+          : RPASVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionStateVerifier
+              .verifyFile({
+                statePath:
+                  persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionState
+                    .statePath,
+
+                expectedSourceConsumptionStateConsumptionStateConsumptionStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .stateId,
+
+                expectedSourceConsumptionStateConsumptionStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .sourceConsumptionStateConsumptionStateId,
+
+                expectedSourceConsumptionStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .sourceConsumptionStateId,
+
+                expectedSourceStateId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .sourceStateId,
+
+                expectedManifestId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .manifestId,
+
+                expectedExperimentId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .experimentId,
+
+                expectedRunId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .runId,
+
+                expectedRecordId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .recordId,
+
+                expectedEnvelopeId:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .envelopeId,
+
+                expectedRecordSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .recordSha256,
+
+                expectedSealSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .sealSha256,
+
+                expectedSourceStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .sourceStateSha256,
+
+                expectedSourceConsumptionStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .sourceConsumptionStateSha256,
+
+                expectedSourceConsumptionStateConsumptionStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .sourceConsumptionStateConsumptionStateSha256,
+
+                expectedSourceConsumptionStateConsumptionStateConsumptionStateSha256:
+                  consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState
+                    .stateSha256,
+              });
+
+
+      const verifiedRunEvidence =
+        verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionState ===
+          undefined
+          ? undefined
+          : RPASStudioVerifiedRunEvidenceBoundary
+              .create({
+                terminalVerification:
+                  verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionStateConsumptionState,
+              });
+
+      /*
+       * ----------------------------------------------------
+       * V1-01 POST-RELEASE DEFECT CORRECTION
+       * ----------------------------------------------------
+       *
+       * Verified laboratory run evidence is optional for a
+       * normal Studio digital execution.
+       *
+       * When verifiedRunEvidence exists, the established M7/M8
+       * fail-closed product chain remains unchanged.
+       *
+       * When verifiedRunEvidence is absent, Studio skips that
+       * optional product chain and completes the digital run.
+       *
+       * No laboratory evidence is fabricated.
+       * No physical measurement authority is introduced.
+       * Physical confirmation remains NOT_CLAIMED.
+       */
+
+      const verifiedRunEvidenceProductChain =
+        verifiedRunEvidence ===
+          undefined
+          ? Object.freeze({
+              verifiedRunEvidenceApi:
+                undefined,
+
+              verifiedRunEvidenceCompatibility:
+                undefined,
+
+              verifiedRunEvidenceClientContract:
+                undefined,
+
+              verifiedRunEvidenceClientResponse:
+                undefined,
+
+              verifiedRunEvidenceClientNegotiation:
+                undefined,
+
+              verifiedRunEvidenceTransport:
+                undefined,
+
+              verifiedRunEvidenceSerializedTransport:
+                undefined,
+
+              verifiedRunEvidenceEndpoint:
+                undefined,
+
+              verifiedRunEvidenceProductRuntime:
+                undefined,
+
+              verifiedRunEvidenceProductUseCase:
+                undefined,
+
+              verifiedRunEvidenceProductAction:
+                undefined,
+
+              verifiedRunEvidenceProductViewModel:
+                undefined,
+
+              verifiedRunEvidenceProductRenderContract:
+                undefined,
+            })
+          : (() => {
+              const guardedVerifiedRunEvidence =
+                RPASStudioVerifiedRunEvidenceBoundaryGuard
+                  .require({
+                    verifiedRunEvidence,
+                  });
+
+
+              const verifiedRunEvidenceApi =
+                RPASStudioVerifiedRunEvidenceApiContract
+                  .create({
+                    guarded:
+                      guardedVerifiedRunEvidence,
+                  });
+
+
+              const verifiedRunEvidenceCompatibility =
+                RPASStudioVerifiedRunEvidenceCompatibilityBoundary
+                  .create({
+                    legacyVerifiedRunEvidence:
+                      verifiedRunEvidence,
+
+                    verifiedRunEvidenceApi,
+                  });
+
+
+              const verifiedRunEvidenceClientContract =
+                RPASStudioVerifiedRunEvidenceClientContract
+                  .create({
+                    verifiedRunEvidenceApi,
+
+                    verifiedRunEvidenceCompatibility,
+                  });
+
+
+              const verifiedRunEvidenceClientResponse =
+                RPASStudioVerifiedRunEvidenceClientResponseResolver
+                  .resolve({
+                    clientContract:
+                      verifiedRunEvidenceClientContract,
+
+                    verifiedRunEvidenceApi,
+
+                    legacyVerifiedRunEvidencePresent:
+                      verifiedRunEvidence !== undefined &&
+                      verifiedRunEvidence !== null,
+                  });
+
+
+              const verifiedRunEvidenceClientNegotiation =
+                RPASStudioVerifiedRunEvidenceClientCapabilityNegotiator
+                  .negotiate({
+                    clientResponse:
+                      verifiedRunEvidenceClientResponse,
+
+                    requestedClientApiVersions: [
+                      "V1",
+                    ],
+                  });
+
+
+              const verifiedRunEvidenceTransport =
+                RPASStudioVerifiedRunEvidenceTransportContract
+                  .create(
+                    verifiedRunEvidenceClientNegotiation,
+                  );
+
+
+              const verifiedRunEvidenceSerializedTransport =
+                RPASStudioVerifiedRunEvidenceTransportContract
+                  .serialize(
+                    verifiedRunEvidenceTransport,
+                  );
+
+
+              const verifiedRunEvidenceEndpoint =
+                RPASStudioVerifiedRunEvidenceEndpointContract
+                  .create(
+                    verifiedRunEvidenceTransport,
+                    verifiedRunEvidenceSerializedTransport,
+                  );
+
+
+              const verifiedRunEvidenceProductRuntime =
+                RPASStudioVerifiedRunEvidenceProductRuntime
+                  .consume(
+                    verifiedRunEvidenceEndpoint,
+                  );
+
+
+              const verifiedRunEvidenceProductUseCase =
+                RPASStudioVerifiedRunEvidenceProductUseCase
+                  .bind(
+                    verifiedRunEvidenceProductRuntime,
+                  );
+
+
+              const verifiedRunEvidenceProductAction =
+                RPASStudioVerifiedRunEvidenceProductAction
+                  .create(
+                    verifiedRunEvidenceProductUseCase,
+                  );
+
+
+              const verifiedRunEvidenceProductViewModel =
+                RPASStudioVerifiedRunEvidenceProductViewModel
+                  .project(
+                    verifiedRunEvidenceProductAction,
+                  );
+
+
+              const verifiedRunEvidenceProductRenderContract =
+                RPASStudioVerifiedRunEvidenceProductRenderContract
+                  .create(
+                    verifiedRunEvidenceProductViewModel,
+                  );
+
+
+              this.latestVerifiedRunEvidenceProductRenderContract =
+                verifiedRunEvidenceProductRenderContract;
+
+
+              RPASStudioVerifiedRunEvidenceProductSurfaceSnapshot
+                .persist(
+                  verifiedRunEvidenceProductRenderContract,
+                );
+
+
+              return Object.freeze({
+                verifiedRunEvidenceApi,
+
+                verifiedRunEvidenceCompatibility,
+
+                verifiedRunEvidenceClientContract,
+
+                verifiedRunEvidenceClientResponse,
+
+                verifiedRunEvidenceClientNegotiation,
+
+                verifiedRunEvidenceTransport,
+
+                verifiedRunEvidenceSerializedTransport,
+
+                verifiedRunEvidenceEndpoint,
+
+                verifiedRunEvidenceProductRuntime,
+
+                verifiedRunEvidenceProductUseCase,
+
+                verifiedRunEvidenceProductAction,
+
+                verifiedRunEvidenceProductViewModel,
+
+                verifiedRunEvidenceProductRenderContract,
+              });
+            })();
+
+
+      const {
+        verifiedRunEvidenceApi,
+
+        verifiedRunEvidenceCompatibility,
+
+        verifiedRunEvidenceClientContract,
+
+        verifiedRunEvidenceClientResponse,
+
+        verifiedRunEvidenceClientNegotiation,
+
+        verifiedRunEvidenceTransport,
+
+        verifiedRunEvidenceSerializedTransport,
+
+        verifiedRunEvidenceEndpoint,
+
+        verifiedRunEvidenceProductRuntime,
+
+        verifiedRunEvidenceProductUseCase,
+
+        verifiedRunEvidenceProductAction,
+
+        verifiedRunEvidenceProductViewModel,
+
+        verifiedRunEvidenceProductRenderContract,
+      } =
+        verifiedRunEvidenceProductChain;
+
+      this.json(
+        response,
+        201,
+        {
+          request:
+            experimentRequest,
+
+          /*
+           * Calibration provenance is intentionally separate
+           * from request.inputProvenance.
+           */
+          calibrationResolution,
+
+          experimentProfile,
+
+          result,
+
+          telemetry,
+
+          evidence,
+
+          laboratoryRunEvidence,
+
+          cockpitLaboratoryRunEvidence,
+
+          persistedCockpitLaboratoryRunEvidence,
+
+          verifiedPersistedCockpitLaboratoryRunEvidence,
+
+          consumedVerifiedPersistedCockpitLaboratoryRunEvidence,
+
+          persistedVerifiedCockpitRunEvidenceConsumptionState,
+
+          verifiedPersistedCockpitRunEvidenceConsumptionState,
+
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionState,
+          persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionState,
+
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState,
+
+          consumedVerifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionState,
+
+          persistedVerifiedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState,
+
+          verifiedPersistedCockpitRunEvidenceConsumptionStateConsumptionStateConsumptionState,
+
+          visualization,
+
+          engineeringState,
+
+          convergence,
+
+          verifiedRunEvidence,
+          verifiedRunEvidenceApi,
+          verifiedRunEvidenceCompatibility,
+          verifiedRunEvidenceClientContract,
+          verifiedRunEvidenceClientResponse,
+          verifiedRunEvidenceClientNegotiation,
+          verifiedRunEvidenceTransport,
+          verifiedRunEvidenceSerializedTransport,
+          verifiedRunEvidenceEndpoint,
+          verifiedRunEvidenceProductRuntime,
+          verifiedRunEvidenceProductUseCase,
+          verifiedRunEvidenceProductAction,
+          verifiedRunEvidenceProductViewModel,
+          verifiedRunEvidenceProductRenderContract,
+        },
+      );
+
+      return;
+    }
+
+    if (
+      request.method ===
+        "POST" &&
+      requestUrl.pathname ===
+        "/api/visualization/regenerate"
+    ) {
+      const body =
+        await this.readBody(
+          request,
+        );
+
+      const executionId =
+        this.requireSafeIdentifier(
+          body.executionId,
+          "executionId",
+        );
+
+      const telemetryPath =
+        this.data
+          .telemetryPathByExecutionId(
+            executionId,
+          );
+
+      if (
+        telemetryPath ===
+          null
+      ) {
+        this.json(
+          response,
+          404,
+          {
+            error:
+              "Execution telemetry was not found.",
+            executionId,
+          },
+        );
+
+        return;
+      }
+
+      const telemetry =
+        this.data
+          .readJson(
+            telemetryPath,
+          );
+
+      if (
+        telemetry ===
+          null
+      ) {
+        this.json(
+          response,
+          500,
+          {
+            error:
+              "Execution telemetry could not be loaded.",
+            executionId,
+          },
+        );
+
+        return;
+      }
+
+      const registeredModelId =
+        typeof telemetry
+          .modelInformation ===
+          "object" &&
+        telemetry
+          .modelInformation !==
+          null &&
+        !Array.isArray(
+          telemetry
+            .modelInformation,
+        ) &&
+        typeof (
+          telemetry
+            .modelInformation as
+            JsonObject
+        ).registeredModelId ===
+          "string"
+          ? (
+              (
+                telemetry
+                  .modelInformation as
+                  JsonObject
+              ).registeredModelId as
+                string
+            )
+              .trim()
+          : undefined;
+
+      const regenerationBioGlowInputs =
+  registeredModelId
+    ?.toUpperCase() ===
+  "RPAS-BIOGLOW-V1"
+    ? (() => {
+        const inputArtifactPath =
+          path.join(
+            this.data.projectRoot,
+            "docs",
+            "evidence",
+            "blender-handoff",
+            `RPAS_BIOGLOW_SIMULATION_INPUTS_${executionId}.json`,
+          );
+
+        const inputArtifact =
+          this.data.readJson(
+            inputArtifactPath,
+          );
+
+        if (
+          inputArtifact ===
+            null ||
+          inputArtifact.schema !==
+            "RPAS_BIOGLOW_SIMULATION_INPUTS_V1" ||
+          inputArtifact.executionId !==
+            executionId ||
+          typeof inputArtifact.inputs !==
+            "object" ||
+          inputArtifact.inputs ===
+            null ||
+          Array.isArray(
+            inputArtifact.inputs,
+          )
+        ) {
+          throw new Error(
+            "Original BioGlow simulation inputs are unavailable for visualization regeneration.",
+          );
+        }
+
+        const inputs =
+          inputArtifact.inputs as
+            JsonObject;
+
+        const requiredInputKeys = [
+          "inputWatts",
+          "resonanceMatch",
+          "materialResponse",
+          "opticalExtraction",
+          "coherence",
+          "coupling",
+          "lossFactor",
+        ];
+
+        for (
+          const key
+          of requiredInputKeys
+        ) {
+          if (
+            typeof inputs[key] !==
+              "number"
+          ) {
+            throw new Error(
+              `Original BioGlow simulation input ${key} is unavailable for visualization regeneration.`,
+            );
+          }
+        }
+
+        return resolveBioGlowSimulationInputs({
+          inputWatts:
+            inputs.inputWatts as number,
+          resonanceMatch:
+            inputs.resonanceMatch as number,
+          materialResponse:
+            inputs.materialResponse as number,
+          opticalExtraction:
+            inputs.opticalExtraction as number,
+          coherence:
+            inputs.coherence as number,
+          coupling:
+            inputs.coupling as number,
+          lossFactor:
+            inputs.lossFactor as number,
+        });
+      })()
+    : undefined;
+
+      const visualization =
+        this.buildBlenderVisualization(
+          telemetryPath,
+          regenerationBioGlowInputs,
+          registeredModelId,
+        );
+
+      this.json(
+        response,
+        200,
+        {
+          operation:
+            "VISUALIZATION_REGENERATION_ONLY",
+
+          experimentExecution:
+            executionId,
+
+          scientificExecution:
+            "NOT_RERUN",
+
+          measurementAuthority:
+            "NOT_CREATED",
+
+          physicalConfirmation:
+            "NOT_CLAIMED",
+
+          telemetry,
+          visualization,
+        },
+      );
+
+      return;
+    }
+
+
+    if (
+      request.method ===
+        "POST" &&
+      requestUrl.pathname ===
+        "/api/visualization/open"
+    ) {
+
+      const body =
+        await this.readBody(
+          request,
+        );
+
+      const result =
+        this.openGeneratedCockpit(
+          body.blendPath,
+        );
+
+      this.json(
+        response,
+        200,
+        result,
+      );
+
+      return;
+    }
+
+    if (
+      request.method ===
+        "GET" &&
+      requestUrl.pathname ===
+        "/api/v1/studio/verified-run-evidence"
+    ) {
+      const renderContract =
+        this.latestVerifiedRunEvidenceProductRenderContract;
+
+      if (
+        renderContract !==
+          null
+      ) {
+        this.json(
+          response,
+          renderContract.endpoint.statusCode,
+          JSON.parse(
+            renderContract.payload.body,
+          ),
+        );
+
+        return;
+      }
+
+      const persistedSnapshot =
+        RPASStudioVerifiedRunEvidenceProductSurfaceSnapshot
+          .load();
+
+      if (
+        persistedSnapshot ===
+          null
+      ) {
+        this.json(
+          response,
+          404,
+          {
+            error:
+              "Verified run evidence is not available.",
+          },
+        );
+
+        return;
+      }
+
+      this.json(
+        response,
+        persistedSnapshot.endpoint.statusCode,
+        JSON.parse(
+          persistedSnapshot.payload.body,
+        ),
+      );
+
+      return;
+    }
+    if (
+      request.method ===
+        "GET"
+    ) {
+      this.serveStatic(
+        requestUrl.pathname,
+        response,
+      );
+
+      return;
+    }
+
+    this.json(
+      response,
+      404,
+      {
+        error:
+          "Route not found.",
+      },
+    );
+  }
+
+
+  private serveStatic(
+    pathname:
+      string,
+
+    response:
+      http.ServerResponse,
+  ): void {
+    const requested =
+      pathname ===
+        "/"
+        ? "index.html"
+        : pathname.replace(
+            /^\/+/,
+            "",
+          );
+
+    const resolved =
+      path.resolve(
+        this.data
+          .studioDirectory,
+
+        requested,
+      );
+
+    const relative =
+      path.relative(
+        this.data
+          .studioDirectory,
+
+        resolved,
+      );
+
+    if (
+      relative.startsWith(
+        "..",
+      ) ||
+      path.isAbsolute(
+        relative,
+      )
+    ) {
+      this.json(
+        response,
+        403,
+        {
+          error:
+            "Forbidden.",
+        },
+      );
+
+      return;
+    }
+
+    if (
+      !fs.existsSync(
+        resolved,
+      ) ||
+      !fs.statSync(
+        resolved,
+      ).isFile()
+    ) {
+      this.json(
+        response,
+        404,
+        {
+          error:
+            "File not found.",
+        },
+      );
+
+      return;
+    }
+
+    const extension =
+      path.extname(
+        resolved,
+      ).toLowerCase();
+
+    const contentTypes:
+      Readonly<
+        Record<
+          string,
+          string
+        >
+      > =
+      Object.freeze({
+        ".html":
+          "text/html; charset=utf-8",
+
+        ".css":
+          "text/css; charset=utf-8",
+
+        ".js":
+          "application/javascript; charset=utf-8",
+
+        ".json":
+          "application/json; charset=utf-8",
+
+        ".svg":
+          "image/svg+xml",
+
+        ".png":
+          "image/png",
+      });
+
+    response.writeHead(
+      200,
+      {
+        "Content-Type":
+          contentTypes[
+            extension
+          ] ??
+          "application/octet-stream",
+
+        "Cache-Control":
+          "no-store",
+
+        "X-Content-Type-Options":
+          "nosniff",
+
+        "X-Frame-Options":
+          "DENY",
+
+        "Referrer-Policy":
+          "no-referrer",
+
+        "Content-Security-Policy":
+          "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self';",
+      },
+    );
+
+    response.end(
+      fs.readFileSync(
+        resolved,
+      ),
+    );
+  }
+
+
+  private readBody(
+    request:
+      http.IncomingMessage,
+  ): Promise<
+    JsonObject
+  > {
+    return new Promise(
+      (
+        resolve,
+        reject,
+      ) => {
+        let body =
+          "";
+
+        request.setEncoding(
+          "utf8",
+        );
+
+        request.on(
+          "data",
+          (
+            chunk:
+              string,
+          ) => {
+            body +=
+              chunk;
+
+            if (
+              body.length >
+              1024 *
+                1024
+            ) {
+              reject(
+                new Error(
+                  "Request body is too large.",
+                ),
+              );
+
+              request.destroy();
+            }
+          },
+        );
+
+        request.on(
+          "end",
+          () => {
+            try {
+              const parsed =
+                JSON.parse(
+                  body ||
+                  "{}",
+                ) as unknown;
+
+              if (
+                typeof parsed !==
+                  "object" ||
+                parsed ===
+                  null ||
+                Array.isArray(
+                  parsed,
+                )
+              ) {
+                reject(
+                  new Error(
+                    "Request body must be a JSON object.",
+                  ),
+                );
+
+                return;
+              }
+
+              resolve(
+                parsed as
+                  JsonObject,
+              );
+            } catch (
+              error
+            ) {
+              reject(
+                error,
+              );
+            }
+          },
+        );
+
+        request.on(
+          "error",
+          reject,
+        );
+      },
+    );
+  }
+
+
+  private focusCockpitWindow(
+    processId: number,
+  ): void {
+    const focusScriptPath =
+      path.resolve(
+        this.data.projectRoot,
+        "blender",
+        "focus_rpas_cockpit.ps1",
+      );
+
+    const focusProcess =
+      spawn(
+        "powershell.exe",
+        [
+          "-NoProfile",
+          "-WindowStyle",
+          "Hidden",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          focusScriptPath,
+          String(processId),
+        ],
+        {
+          detached: true,
+          stdio: "ignore",
+          windowsHide: true,
+        },
+      );
+
+    focusProcess.unref();
+  }
+
+  private openGeneratedCockpit(
+    requestedPath:
+      unknown,
+  ): JsonObject {
+    const blendPath =
+      this.requireText(
+        requestedPath,
+        "blendPath",
+      );
+
+    const generatedDirectory =
+      path.resolve(
+        this.data
+          .projectRoot,
+
+        "blender",
+        "generated",
+      );
+
+    const resolvedBlendPath =
+      path.resolve(
+        blendPath,
+      );
+
+    const relativePath =
+      path.relative(
+        generatedDirectory,
+        resolvedBlendPath,
+      );
+
+    const outsideGeneratedDirectory =
+      relativePath.startsWith(
+        "..",
+      ) ||
+      path.isAbsolute(
+        relativePath,
+      );
+
+    if (
+      outsideGeneratedDirectory
+    ) {
+      throw new Error(
+        "Cockpit path must be inside the generated Blender directory.",
+      );
+    }
+
+    if (
+      path.extname(
+        resolvedBlendPath,
+      ).toLowerCase() !==
+        ".blend"
+    ) {
+      throw new Error(
+        "Only Blender .blend files can be opened.",
+      );
+    }
+
+    if (
+      !fs.existsSync(
+        resolvedBlendPath,
+      )
+    ) {
+      throw new Error(
+        `Generated cockpit not found: ${resolvedBlendPath}`,
+      );
+    }
+
+    const blenderExecutable =
+      process.env
+        .RPAS_BLENDER_EXE ??
+      "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe";
+
+    const operatorScriptPath =
+      path.resolve(
+        this.data
+          .projectRoot,
+
+        "blender",
+        "rpas_operator_view.py",
+      );
+
+    if (
+      !fs.existsSync(
+        blenderExecutable,
+      )
+    ) {
+      throw new Error(
+        `Blender executable not found: ${blenderExecutable}`,
+      );
+    }
+
+    if (
+      !fs.existsSync(
+        operatorScriptPath,
+      )
+    ) {
+      throw new Error(
+        `RPAS operator script not found: ${operatorScriptPath}`,
+      );
+    }
+
+    const child =
+      spawn(
+        blenderExecutable,
+        [
+          "--disable-autoexec",
+          resolvedBlendPath,
+          "--python",
+          operatorScriptPath,
+        ],
+        {
+          detached:
+            true,
+
+          stdio:
+            "ignore",
+
+          windowsHide:
+            false,
+
+          cwd:
+            this.data
+              .projectRoot,
+        },
+      );
+
+    child.unref();
+
+    if (typeof child.pid === "number") {
+      this.focusCockpitWindow(child.pid);
+    }
+
+    return Object.freeze({
+      status:
+        "OPENING",
+
+      blendPath:
+        resolvedBlendPath,
+
+      application:
+        "BLENDER",
+
+      launchMethod:
+        "RPAS_BLENDER_USER_MODE",
+
+      executionMode:
+        "SHELL_OPEN",
+
+      securityScope:
+        "GENERATED_COCKPITS_ONLY",
+    });
+  }
+
+
+  private buildBlenderVisualization(
+    telemetryPath:
+      string,
+
+    bioGlowSimulationInputs?:
+      BioGlowSimulationInputs,
+
+    modelId?:
+      string,
+  ): JsonObject {
+    try {
+      const telemetry =
+        JSON.parse(
+          fs.readFileSync(
+            telemetryPath,
+            "utf8",
+          ),
+        ) as Record<
+          string,
+          any
+        >;
+
+      const experimentId =
+        this.requireText(
+          telemetry
+            .experimentId,
+
+          "telemetry.experimentId",
+        );
+
+      const executionId =
+        this.requireSafeIdentifier(
+          telemetry
+            .executionId,
+
+          "telemetry.executionId",
+        );
+
+      const telemetryRegisteredModelId =
+        typeof telemetry
+          .modelInformation
+          ?.registeredModelId ===
+          "string" &&
+        telemetry
+          .modelInformation
+          .registeredModelId
+          .trim()
+          .length >
+          0
+          ? telemetry
+              .modelInformation
+              .registeredModelId
+              .trim()
+          : undefined;
+
+      const explicitModelId =
+        typeof modelId ===
+          "string" &&
+        modelId
+          .trim()
+          .length >
+          0
+          ? modelId
+              .trim()
+          : undefined;
+
+      if (
+        explicitModelId !==
+          undefined &&
+        telemetryRegisteredModelId !==
+          undefined &&
+        explicitModelId
+          .toUpperCase() !==
+        telemetryRegisteredModelId
+          .toUpperCase()
+      ) {
+        throw new Error(
+          "Visualization model identity conflicts with telemetry registered model identity.",
+        );
+      }
+
+      const effectiveModelId =
+        explicitModelId ??
+        telemetryRegisteredModelId;
+
+      const projectRoot =
+        this.data
+          .projectRoot;
+
+      const handoffDirectory =
+        path.join(
+          projectRoot,
+          "docs",
+          "evidence",
+          "blender-handoff",
+        );
+
+      const generatedBlendDirectory =
+        path.join(
+          projectRoot,
+          "blender",
+          "generated",
+        );
+
+      fs.mkdirSync(
+        handoffDirectory,
+        {
+          recursive:
+            true,
+        },
+      );
+
+      fs.mkdirSync(
+        generatedBlendDirectory,
+        {
+          recursive:
+            true,
+        },
+      );
+
+      const visualizationTarget =
+        resolveExperimentVisualization({
+          projectRoot,
+          experimentId,
+          modelId:
+            effectiveModelId,
+        });
+
+      const sourceBlendPath =
+        visualizationTarget
+          .scenePath;
+
+      const adapterPath =
+        visualizationTarget
+          .adapterPath;
+
+      const outputBlendPath =
+        path.join(
+          generatedBlendDirectory,
+          `RPAS_COCKPIT_${executionId}.blend`,
+        );
+
+      const blenderExecutable =
+        process.env
+          .RPAS_BLENDER_EXE ??
+        "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe";
+
+      if (
+        !fs.existsSync(
+          blenderExecutable,
+        )
+      ) {
+        throw new Error(
+          `Blender executable not found: ${blenderExecutable}`,
+        );
+      }
+
+      /*
+       * ------------------------------------------------------
+       * BIOGLOW PHYSICAL COCKPIT
+       * ------------------------------------------------------
+       *
+       * BioGlow consumes ExperimentVisualizationState JSON.
+       *
+       * The current response is produced by the explicitly
+       * named RPAS legacy nonlinear simulation profile.
+       *
+       * Provenance remains SIMULATED.
+       *
+       * No physical measurement or physical confirmation
+       * is claimed by this visualization route.
+       */
+
+      if (
+        visualizationTarget
+          .visualizationType ===
+        "BIOGLOW_PHYSICAL_COCKPIT"
+      ) {
+        if (
+          bioGlowSimulationInputs ===
+          undefined
+        ) {
+          throw new Error(
+            "BioGlow simulation inputs were not resolved.",
+          );
+        }
+
+        const simulatedResponse =
+          simulateBioGlowResponse(
+            bioGlowSimulationInputs,
+          );
+
+        
+        /*
+         * RPAS M102.5
+         *
+         * Sanitized product projection.
+         * Values are copied from the existing BioGlow response.
+         * No physics is recalculated here.
+         */
+        this.latestAmplifierExecutionState =
+          Object.freeze({
+            schema:
+              "RPAS_AMPLIFIER_EXECUTION_STATE_V1",
+
+            access:
+              "READ_ONLY",
+
+            experimentId,
+            executionId,
+
+            status:
+              "RESPONSE_READY",
+
+            provenance:
+              simulatedResponse.provenance,
+
+            response:
+              Object.freeze({
+                lightOutput:
+                  simulatedResponse
+                    .response
+                    .lightOutput,
+
+                resonanceEfficiency:
+                  simulatedResponse
+                    .response
+                    .resonanceEfficiency,
+
+                coupling:
+                  simulatedResponse
+                    .response
+                    .coupling,
+
+                coherence:
+                  simulatedResponse
+                    .response
+                    .coherence,
+
+                drift:
+                  simulatedResponse
+                    .response
+                    .drift,
+
+                confidence:
+                  simulatedResponse
+                    .response
+                    .confidence,
+
+                thermalState:
+                  simulatedResponse
+                    .response
+                    .thermalState,
+
+                resonanceState:
+                  simulatedResponse
+                    .response
+                    .resonanceState,
+              }),
+
+            evidence:
+              "PENDING",
+
+            measurement:
+              "NOT_AVAILABLE",
+
+            physicalConfirmation:
+              "NOT_CLAIMED",
+
+            visualization:
+              "PENDING",
+          });
+const simulationInputPath =
+          path.join(
+            handoffDirectory,
+            `RPAS_BIOGLOW_SIMULATION_INPUTS_${executionId}.json`,
+          );
+
+        fs.writeFileSync(
+          simulationInputPath,
+          JSON.stringify(
+            {
+              schema:
+                "RPAS_BIOGLOW_SIMULATION_INPUTS_V1",
+
+              experimentId,
+              executionId,
+
+              provenance:
+                "SIMULATED",
+
+              model:
+                simulatedResponse
+                  .model,
+
+              inputs:
+                bioGlowSimulationInputs,
+
+              warnings:
+                simulatedResponse
+                  .warnings,
+            },
+            null,
+            2,
+          ),
+          "utf8",
+        );
+
+        const visualizationState =
+          buildBioGlowVisualizationState({
+            experimentId,
+            executionId,
+
+            ...(
+              effectiveModelId ===
+                undefined
+                ? {}
+                : {
+                    modelId:
+                      effectiveModelId,
+                  }
+            ),
+
+            material:
+              typeof telemetry
+                .material ===
+                "string"
+                ? telemetry
+                    .material
+                : undefined,
+
+            acousticFrequencyGHz:
+              typeof telemetry
+                .acousticInputs
+                ?.frequency ===
+                "number"
+                ? telemetry
+                    .acousticInputs
+                    .frequency
+                : undefined,
+
+            temperatureCelsius:
+              typeof telemetry
+                .temperature
+                ?.value ===
+                "number"
+                ? telemetry
+                    .temperature
+                    .value
+                : undefined,
+
+            provenance:
+              "SIMULATED",
+
+            response: {
+              lightOutput:
+                simulatedResponse
+                  .response
+                  .lightOutput,
+
+              resonanceEfficiency:
+                simulatedResponse
+                  .response
+                  .resonanceEfficiency,
+
+              coupling:
+                simulatedResponse
+                  .response
+                  .coupling,
+
+              coherence:
+                simulatedResponse
+                  .response
+                  .coherence,
+
+              drift:
+                simulatedResponse
+                  .response
+                  .drift,
+
+              confidence:
+                simulatedResponse
+                  .response
+                  .confidence,
+
+              thermalState:
+                simulatedResponse
+                  .response
+                  .thermalState,
+
+              resonanceState:
+                simulatedResponse
+                  .response
+                  .resonanceState,
+            },
+          });
+
+        const visualizationStatePath =
+          path.join(
+            handoffDirectory,
+            `RPAS_BIOGLOW_VISUAL_STATE_${executionId}.json`,
+          );
+
+        fs.writeFileSync(
+          visualizationStatePath,
+
+          JSON.stringify(
+            visualizationState,
+            null,
+            2,
+          ),
+
+          "utf8",
+        );
+
+        const stagedOutputBlendPath =
+          path.join(
+            generatedBlendDirectory,
+            `.RPAS_COCKPIT_${executionId}.${process.pid}.${Date.now()}.generating.blend`,
+          );
+
+        const blenderOutput =
+          execFileSync(
+            blenderExecutable,
+            [
+              "--disable-autoexec",
+              sourceBlendPath,
+              "--background",
+              "--python",
+              adapterPath,
+              "--",
+              visualizationStatePath,
+              stagedOutputBlendPath,
+            ],
+            {
+              cwd:
+                projectRoot,
+
+              encoding:
+                "utf8",
+
+              windowsHide:
+                true,
+
+              maxBuffer:
+                10 *
+                1024 *
+                1024,
+            },
+          );
+
+        if (
+          !blenderOutput.includes(
+            "RPAS_BIOGLOW_VISUAL_ADAPTER_PASS=true",
+          )
+        ) {
+          throw new Error(
+            "BioGlow Blender adapter did not report PASS.",
+          );
+        }
+
+        if (
+          !fs.existsSync(
+            stagedOutputBlendPath,
+          )
+        ) {
+          throw new Error(
+            "Blender completed without creating a new BioGlow cockpit output.",
+          );
+        }
+
+        fs.copyFileSync(
+          stagedOutputBlendPath,
+          outputBlendPath,
+        );
+
+        fs.rmSync(
+          stagedOutputBlendPath,
+          {
+            force: true,
+          },
+        );
+
+        if (
+          !fs.existsSync(
+            outputBlendPath,
+          )
+        ) {
+          throw new Error(
+            "BioGlow cockpit promotion failed.",
+          );
+        }
+
+        return Object.freeze({
+          status:
+            "READY",
+
+          experimentId,
+          executionId,
+
+          visualizationType:
+            visualizationTarget
+              .visualizationType,
+
+          fallback:
+            visualizationTarget
+              .fallback,
+
+          simulationInputPath,
+
+          simulationInputs:
+            bioGlowSimulationInputs,
+
+          visualizationStatePath,
+
+          blendPath:
+            outputBlendPath,
+
+          sourceBlendPath,
+
+          adapterPath,
+
+          provenance:
+            visualizationState
+              .provenance,
+
+          mode:
+            visualizationState
+              .mode,
+
+          warnings:
+            visualizationState
+              .warnings,
+
+          blenderMode:
+            "BACKGROUND",
+
+          simulationModel:
+            simulatedResponse
+              .model,
+
+          simulationWarnings:
+            simulatedResponse
+              .warnings,
+
+          log:
+            blenderOutput
+              .trim()
+              .split(
+                /\r?\n/,
+              )
+              .slice(
+                -12,
+              ),
+        });
+      }
+
+      /*
+       * ------------------------------------------------------
+       * GENERIC ENGINEERING COCKPIT
+       * ------------------------------------------------------
+       *
+       * Existing behavior is preserved for every experiment
+       * that does not resolve to the BioGlow physical cockpit.
+       */
+
+      const handoffPath =
+        path.join(
+          handoffDirectory,
+          `RPAS_BLENDER_HANDOFF_${executionId}.json`,
+        );
+
+      const handoff =
+        writeBlenderHandoffPackage(
+          {
+            experimentId,
+            executionId,
+
+            material:
+              this.requireText(
+                telemetry
+                  .material,
+
+                "telemetry.material",
+              ),
+
+            wavelengthNm:
+              telemetry
+                .opticalInputs
+                ?.wavelength,
+
+            acousticFrequencyGHz:
+              telemetry
+                .acousticInputs
+                ?.frequency,
+
+            temperatureCelsius:
+              telemetry
+                .temperature
+                ?.value,
+
+            soundVelocityMps:
+              telemetry
+                .soundVelocity
+                ?.value,
+
+            rawFrequencyGHz:
+              telemetry
+                .resonanceResult
+                ?.rawFrequency,
+
+            correctedFrequencyGHz:
+              telemetry
+                .resonanceResult
+                ?.thermallyCorrectedFrequency,
+
+            calibrationOffsetGHz:
+              telemetry
+                .calibrationOffsets
+                ?.frequencyOffset,
+
+            finalFrequencyGHz:
+              telemetry
+                .calibratedResult
+                ?.finalFrequency,
+
+            evidenceId:
+              telemetry
+                .evidenceId,
+          },
+
+          handoffPath,
+        );
+
+      const blenderOutput =
+        execFileSync(
+        blenderExecutable,
+       [
+      [
+     "--disable-autoexec",
+     sourceBlendPath,
+     "--background",
+     "--python",
+     adapterPath,
+     "--",
+     handoffPath,
+     outputBlendPath,
+     ],
+          {
+            cwd:
+              projectRoot,
+
+            encoding:
+              "utf8",
+
+            windowsHide:
+              true,
+
+            maxBuffer:
+              10 *
+              1024 *
+              1024,
+          },
+        );
+
+      if (
+        !fs.existsSync(
+          outputBlendPath,
+        )
+      ) {
+        throw new Error(
+          "Blender completed without creating the cockpit output.",
+        );
+      }
+
+      return Object.freeze({
+        status:
+          "READY",
+
+        experimentId,
+        executionId,
+
+        packageId:
+          handoff
+            .packageId,
+
+        handoffPath,
+
+        blendPath:
+          outputBlendPath,
+
+        sourceBlendPath,
+
+        adapterPath,
+
+        residualKHz:
+          handoff
+            .resonance
+            .modelResidualKHz,
+
+        measurementAvailable:
+          handoff
+            .measurement
+            .available,
+
+        physicalConfirmation:
+          handoff
+            .measurement
+            .physicalConfirmation,
+
+        blenderMode:
+          "BACKGROUND",
+
+        visualizationType:
+          visualizationTarget
+            .visualizationType,
+
+        fallback:
+          visualizationTarget
+            .fallback,
+
+        log:
+          blenderOutput
+            .trim()
+            .split(
+              /\r?\n/,
+            )
+            .slice(
+              -12,
+            ),
+      });
+    } catch (
+      error
+    ) {
+      return Object.freeze({
+        status:
+          "FAILED",
+
+        error:
+          error instanceof
+            Error
+            ? error.message
+            : String(
+                error,
+              ),
+
+        telemetryPath,
+      });
+    }
+  }
+
+
+  private optionalNumberInput(
+    value:
+      unknown,
+
+    fieldName:
+      string,
+  ): number | undefined {
+    if (
+      value ===
+      undefined
+    ) {
+      return undefined;
+    }
+
+    if (
+      typeof value !==
+        "number"
+    ) {
+      throw new Error(
+        `${fieldName} must be a number.`,
+      );
+    }
+
+    return value;
+  }
+
+
+  private optionalTextInput(
+    value:
+      unknown,
+
+    fieldName:
+      string,
+  ): string | undefined {
+    if (
+      value ===
+      undefined
+    ) {
+      return undefined;
+    }
+
+    if (
+      typeof value !==
+        "string"
+    ) {
+      throw new Error(
+        `${fieldName} must be a string.`,
+      );
+    }
+
+    return value;
+  }
+
+
+  private validateRequestAuthority(
+    request:
+      http.IncomingMessage,
+  ): void {
+    const host =
+      request.headers
+        .host ??
+      "";
+
+    const allowedHosts =
+      new Set([
+        "127.0.0.1:4173",
+        "localhost:4173",
+      ]);
+
+    if (
+      !allowedHosts.has(
+        host.toLowerCase(),
+      )
+    ) {
+      throw new Error(
+        "Invalid Host header.",
+      );
+    }
+
+    const origin =
+      request.headers
+        .origin;
+
+    if (
+      origin !==
+      undefined
+    ) {
+      const allowedOrigins =
+        new Set([
+          "http://127.0.0.1:4173",
+          "http://localhost:4173",
+        ]);
+
+      if (
+        !allowedOrigins.has(
+          origin.toLowerCase(),
+        )
+      ) {
+        throw new Error(
+          "Cross-origin request rejected.",
+        );
+      }
+    }
+  }
+
+
+  private requireSafeIdentifier(
+    value:
+      unknown,
+
+    fieldName:
+      string,
+  ): string {
+    const result =
+      this.requireText(
+        value,
+        fieldName,
+      );
+
+    if (
+      !/^[A-Za-z0-9_-]{1,128}$/.test(
+        result,
+      )
+    ) {
+      throw new Error(
+        `${fieldName} contains invalid characters.`,
+      );
+    }
+
+    return result;
+  }
+
+
+  private requireText(
+    value:
+      unknown,
+
+    fieldName:
+      string,
+  ): string {
+    if (
+      typeof value !==
+        "string" ||
+      value.trim()
+        .length ===
+        0
+    ) {
+      throw new Error(
+        `${fieldName} must be a non-empty string.`,
+      );
+    }
+
+    return value.trim();
+  }
+
+
+  private json(
+    response:
+      http.ServerResponse,
+
+    statusCode:
+      number,
+
+    body:
+      unknown,
+  ): void {
+    response.writeHead(
+      statusCode,
+      {
+        "Content-Type":
+          "application/json; charset=utf-8",
+
+        "Cache-Control":
+          "no-store",
+
+        "X-Content-Type-Options":
+          "nosniff",
+
+        "X-Frame-Options":
+          "DENY",
+
+        "Referrer-Policy":
+          "no-referrer",
+
+        "Content-Security-Policy":
+          "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self';",
+      },
+    );
+
+    response.end(
+      JSON.stringify(
+        body,
+        null,
+        2,
+      ),
+    );
+  }
+}
+
+
+async function main():
+  Promise<void> {
+  const server =
+    new RPASStudioServer();
+
+  await server.start(
+    4173,
+    "127.0.0.1",
+  );
+
+  console.log(
+    "================================================",
+  );
+
+  console.log(
+    "              RPAS STUDIO V1",
+  );
+
+  console.log(
+    "================================================",
+  );
+
+  console.log(
+    "Status : OPERATIONAL",
+  );
+
+  console.log(
+    "URL    : http://127.0.0.1:4173",
+  );
+
+  console.log(
+    "",
+  );
+
+  console.log(
+    "Keep this terminal open while using RPAS Studio.",
+  );
+
+  console.log(
+    "Press Ctrl+C to stop the Studio server.",
+  );
+}
+
+
+if (
+  require.main ===
+  module
+) {
+  main().catch(
+    (
+      error:
+        unknown,
+    ) => {
+      console.error(
+        error,
+      );
+
+      process.exitCode =
+        1;
+    },
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
