@@ -706,3 +706,52 @@ textarea {
     padding: 4.5rem 0;
   }
 }
+
+.gallery-featured {
+  grid-column: span 7;
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #eeeeec;
+  border: 1px solid var(--line);
+}
+
+.gallery-featured .gallery-image-wrap {
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #eeeeec;
+}
+
+.gallery-featured .gallery-image-wrap img {
+  width: 100%;
+  height: 100%;
+
+  /* THIS IS THE IMPORTANT PART */
+  object-fit: contain;
+  object-position: center;
+
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.gallery-featured:hover img {
+  transform: scale(1.025);
+}
+
+.gallery-featured .gallery-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 5rem 1.5rem 1.5rem;
+
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.82),
+    rgba(0, 0, 0, 0)
+  );
+}
